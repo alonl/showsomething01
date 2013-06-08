@@ -99,6 +99,24 @@ function TurnInfoGCopy(turnInfoG) {
 // Server functions
 //*****************************************************************************
 
+var ajaxcall = function(method, url, onready, body) {
+
+    var request = false;
+    request = new XMLHttpRequest();
+
+    if (request) {
+
+        request.open(method, url);
+        request.onreadystatechange = function() {
+            if (request.readyState == 4 &&
+                    request.status == 200) {
+                onready(request);
+            }
+        };
+        request.send("{" + body + "}");
+    }
+};
+
 /* our server */
 Server = {};
 
@@ -237,6 +255,7 @@ Server.getTurnInformationGLength = function(gameID, callback) {
 Server.validateGuess = function(gameId, answer, callback) {
     Server.getTurnInformationG(gameId, function(game2) {
         if (game2.word.toUpperCase() == answer.toUpperCase()) {
+
             Server.getGame(gameId, function(game) {
 
                 // change the game state
@@ -567,10 +586,11 @@ function validateGuess() {
  */
 function createNewGame(opponentID) {
     // updated server
-    Server.createNewGame(uid, opponentID, function(game) {
+    ajaxcall("POST", "/games", function(request) {
+        game = JSON.parse(request.responseText);
         currentGameID = game._id;
         yourTurnRiddler(game);
-    });
+    }, "uid0: " + uid + ", uid1: " + opponentID);
 }
 
 /**
@@ -738,24 +758,6 @@ function reloadPageMainMenu(pageSelector, callback) {
     $(pageSelector + 'Content').append('<ul data-role="listview" id="testlist" data-inset="true"></ul>');
 
     userActiveGames = [];
-
-    var ajaxcall = function(method, url, onready) {
-
-        var request = false;
-        request = new XMLHttpRequest();
-
-        if (request) {
-
-            request.open(method, url);
-            request.onreadystatechange = function() {
-                if (request.readyState == 4 &&
-                        request.status == 200) {
-                    onready(request);
-                }
-            };
-            request.send(null);
-        }
-    };
 
     ajaxcall("GET", "games/" + uid, function(request) {
 
