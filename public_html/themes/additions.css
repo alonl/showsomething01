@@ -1,0 +1,74 @@
+/* 
+    Document   : additions.css
+    Author     : Alon Lavi & Michael Chochlov
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+h1 {
+    margin: 0 0 0 0 !important;
+}
+
+/*.footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0px;
+    right: 0px;
+}*/
+
+.centered-container{
+   position: absolute;
+   top: 50%;
+   margin-top: -120px;/* half of .centered-content height */
+   left: 0;
+   width: 100%;
+}
+
+.centered-content {
+   width: 300px;
+   margin-left: auto;
+   margin-right: auto;
+   height: 240px;
+}
+
+.centered {
+    text-align: center;
+    margin: auto;
+    position: fixed;
+    width: 90%;
+    bottom: 40%;
+    /*right: 5%;*/
+}
+
+.centered-normal {
+    margin: auto;
+}
+
+.fit-width {
+    max-width: 100%;
+}
+
+@-webkit-keyframes blinker {  
+    from { opacity: 1.0; }
+    to { opacity: 0.0; }
+}
+
+.blinking {
+    -webkit-animation-name: blinker;  
+    -webkit-animation-iteration-count: infinite;  
+    -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+    -webkit-animation-duration: 1s; 
+}
+
+.centered-text{
+    text-align: center;
+}
+
+.hidden-button{
+    display: none;
+}
+
+.fit-image{
+    max-width: 800px;
+    max-height: 800px;
+}

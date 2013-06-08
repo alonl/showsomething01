@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>ShowSomething</title> 
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+        <link rel="stylesheet" href="themes/show1.min.css"/>
+        <link rel="stylesheet" href="themes/additions.css"/>
+
+        <script src="js/libs/jquery-1.8.3.min.js"></script>
+        <script src="js/libs/jquery.mobile-1.2.1.min.js"></script>
+        <script src="js/before.js"></script>
+
+    </head>
+
+    <body>
+
+        <section data-role="page" id="pageWelcome" data-theme="a">
+
+            <header data-role="header" data-position="fixed" >
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+            <div data-role="content">
+                <h2 id="welcomeMessage">Welcome to ShowSomething</h2>
+                <h3 id="loading" class="blinking">Loading...</h3>
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <h3>See If You Know What You See!</h3>
+            </footer>
+
+        </section><!-- /page Loading -->
+
+        <section data-role="page" id="pageLogin" data-theme="a">
+
+            <header data-role="header" data-position="fixed">
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+            <div data-role="content">
+
+                <div class="centered-container">
+                    <div id="welcomeDiv" class="centered-content centered-text">
+                        <h3>Welcome to ShowSomething!<br>Please log in with your Facebook account.</h3>
+                        <!--Facebook login button-->
+                        <a href="javascript: loginFacebookUser();"><img src="img/facebook_login_button.png" alt="Facebook Login" style="width: 270px;"></a>
+                    </div>
+                </div>
+
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <h3>See If You Know What You See!</h3>
+            </footer>
+
+        </section><!-- /page Login -->
+
+        <section data-role="page" id="pageSelectDifficulty" data-theme="a">
+
+            <header data-role="header" data-position="fixed">
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+            <div data-role="content" id="difficultyLevel" data-insert="true"> 
+
+                <h3>Choose Your Difficulty:</h3>
+                <a href="javascript: generateWords(1);" data-role="button">Easy</a>
+                <a href="javascript: generateWords(2);" data-role="button">Medium</a>
+                <a href="javascript: generateWords(3);" data-role="button">Hard!</a>
+
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>
+            </footer>
+
+        </section><!-- /page SelectDifficulty -->
+
+        <section data-role="page" id="pageGeneratedWords" data-theme="a">
+
+            <header data-role="header">
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+            <div data-role="content" id="contentGeneratedWords" data-insert="true"> 
+
+                <h3>Select a Word For Depicting:</h3>
+
+                <fieldset data-role="controlgroup" id="wordsPresented" data-insert="true">
+                    <input type="radio" name="word-choice" id="choice-0" value="" checked="checked">
+                    <label id="for-choice-0" for="choice-0">0</label>
+                    <input type="radio" name="word-choice" id="choice-1" value="">
+                    <label id="for-choice-1" for="choice-1">1</label>
+                    <input type="radio" name="word-choice" id="choice-2" value="">
+                    <label id="for-choice-2" for="choice-2">2</label>
+                    <input type="radio" name="word-choice" id="choice-3" value="">
+                    <label id="for-choice-3" for="choice-3">3</label>
+                    <input type="radio" name="word-choice" id="choice-4" value="">
+                    <label id="for-choice-4" for="choice-4">4</label>
+                </fieldset>
+
+                <div>
+                    <a href="javascript: transferChosenWord();" data-role="button">Take Picture!</a>
+                </div>
+
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>
+            </footer>
+
+        </section><!-- /page GeneratedWords -->
+
+        <section data-role="page" id="pagePrePicture" data-theme="a">
+
+            <header data-role="header" data-position="fixed">
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+
+            <div data-role="content">
+
+                <div class="centered-text"><h3>You are now describing: <span id='chosenWord'></span></h3></div>
+                <div class='centered-normal fit-image'>
+                    <a href="javascript: filePreview();">
+                        <img class='fit-width' id='picturePreview' src='img/pre_upload.jpg' alt='Click here to upload your picture!'>
+                    </a>
+                </div>
+
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <form id="sendPicture" enctype="multipart/form-data" method="post" action="/">
+                    <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);" class="hidden-button"/>
+                    <!--TODO: check maximum file size-->
+                    <input type="button" onclick="fileUpload();" value="ShowIt!" />
+                </form>
+                <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>		
+            </footer>
+
+        </section><!-- /page PrePicture -->
+
+        <section data-role="page" id="pageGuess" data-theme="a"> 
+
+            <header data-role="header">
+                <h1><img src="img/logo_trans.png" alt="ShowSomething"></h1>
+            </header>
+
+            <div data-role="content" data-insert="true">
+
+                <div class="centered-text"><strong>What <span id="riddleName"></span> Has to Show You</strong><br></div>
+
+                <div class="centered-normal fit-image" id="riddleImageDiv"></div>
+
+                <!-- a button with the give-up option
+                     a clue button, preset clue for this riddle (goes with the choice of word buy the riddler
+                -->
+
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <h3>Fill in your answer!</h3>
+                <form class="centered-text" name ="riddle-answer" id="riddle-answer" action="/" data-ajax="false" onsubmit="javascript: return false;">
+                    <input type="hidden" name="riddleGameId" id="riddleGameId">
+                    <input type="text" name="riddleAnswer" id="riddleAnswer" class="centered-text" data-mini="true" data-insert="true" />
+                    <button type="submit" name="submit" onclick="validateGuess();">Submit</button>
+                </form>
+                <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>
+            </footer>
+
+        </section><!-- /page Guess -->
+
+        <!--Facebook Javascript SDK-->
+        <div id="fb-root"></div>
+        <script src="js/after.js"></script>
+
+    </body>
+
+</html>
