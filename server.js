@@ -127,7 +127,7 @@ app.get('/game/:gameid', function(req, res) {
 
 });
 
-
+// generate words for new turn riddler
 app.get('/game/generate/:gameid/:diff', function(req, res) {
 	 
 	diff = req.params.diff;
@@ -170,6 +170,7 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 			
 			// update database
 			// creates an instance of a relative game accordingly
+			// TODO: create this database and push
 			newTurnInfoR = {
 				"gameID": gameID,
 				"word0": chosenWords[0],
@@ -187,6 +188,60 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 		
 	});
 
+});
+
+// get registered users from db
+app.get('/users', function (req, res) {
+
+	showsomeDb.getAllUsers(function(error, users) {
+	
+		if (error) {
+			console.log(error);
+		} else {
+			res.send(users);
+		}
+		
+	});
+	
+
+
+});
+
+// update new user to registered users db
+app.post('/users/:id', function (req, res) {
+	
+	userID = req.params.id;
+	found = false;
+	
+	showsomeDb.getAllUsers(function(error, users) {
+	
+		if (error) {
+			console.log(error);
+		} else {
+			
+			for (i = 0; i < users.length; i++) {
+			
+				if (users[i].uid == userID) {
+					found = true;
+				}
+			}
+			
+			// if user is not registered, registers the user and returns the object id of this new user
+			if (!found) {
+				user = { "uid": userID };
+				showsomeDb.saveUser(user, function(error, newid) {
+				res.send(newid);
+				});
+				
+			} else {
+			
+				// if registered, returns the id given
+				res.send(userID);
+			}
+		}
+
+	});
+	
 });
 
 app.get('/momo', function(req, res) {
@@ -213,8 +268,60 @@ showsomeDb.saveGames([
         }
     ], function(callback) {});
 	
-
 	
+showsomeDb.saveUsers([
+
+        {
+            // a user object
+            "uid": "761779163"
+        },
+        {
+            // a user object
+            "uid": "759352895"
+        },
+		{
+            // a user object
+            "uid": "583844288"
+        },
+		{
+            // a user object
+            "uid": "759352895"
+        },
+		{
+            // a user object
+            "uid": "100001053996829"
+        },
+		{
+            // a user object
+            "uid": "1127758094"
+        },
+		{
+            // a user object
+            "uid": "589522209"
+        },
+		{
+            // a user object
+            "uid": "604016348"
+        },
+		{
+            // a user object
+            "uid": "603071564"
+        },
+		{
+            // a user object
+            "uid": "617923676"
+        },
+		{
+            // a user object
+            "uid": "833304196"
+        },
+		{
+            // a user object
+            "uid": "100001388995300"
+        }
+    ], function(callback) {});
+	
+
 showsomeDb.saveWords([
         {
             // a word object

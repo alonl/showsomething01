@@ -21,6 +21,47 @@ ShowsomeDb.prototype.getCollection = function(callback) {
   });
 };
 
+ShowsomeDb.prototype.getCollectionWords = function(callback) {
+  this.db.collection('words', function(error, words_collection) {
+    if( error ) callback(error);
+    else callback(null, words_collection);
+  });
+};
+
+ShowsomeDb.prototype.getCollectionUsers = function(callback) {
+  this.db.collection('users', function(error, users_collection) {
+    if( error ) callback(error);
+    else callback(null, users_collection);
+  });
+};
+
+// return all registered users
+ShowsomeDb.prototype.getAllUsers = function(callback) {
+    this.getCollectionUsers(function(error, users_collection) {
+      if( error ) callback(error)
+      else {
+        users_collection.find().toArray(function(error, results) {
+          if( error ) callback(error)
+          else callback(null, results)
+        });
+      }
+    });
+};
+
+// registers a user
+ShowsomeDb.prototype.saveUser = function(user, callback) {
+    this.getCollectionUsers(function(error, users_collection) {
+      if( error ) callback(error)
+	  
+      else {
+		user.created_at = new Date();
+		users_collection.insert(user, function() {
+        callback(null, user._id);
+        });
+      }
+    });
+};
+
 //find all games
 ShowsomeDb.prototype.findAll = function(callback) {
     this.getCollection(function(error, games_collection) {
@@ -36,7 +77,7 @@ ShowsomeDb.prototype.findAll = function(callback) {
 
 // finds all words with the given difficulty
 ShowsomeDb.prototype.getWordByDiff = function (diff, callback) {
-	  this.getCollection(function(error, words_collection) {
+	  this.getCollectionWords(function(error, words_collection) {
       if(error) callback(error)
       else {
         words_collection.find({difficulty: diff}).toArray(function(error, results) {
@@ -82,7 +123,7 @@ ShowsomeDb.prototype.saveGames = function(games, callback) {
 
 //save new words
 ShowsomeDb.prototype.saveWords = function(words, callback) {
-    this.getCollection(function(error, words_collection) {
+    this.getCollectionWords(function(error, words_collection) {
       if( error ) callback(error)
       else {
         if( typeof(words.length)=="undefined")
@@ -95,6 +136,26 @@ ShowsomeDb.prototype.saveWords = function(words, callback) {
 
         words_collection.insert(words, function() {
           callback(null, words);
+        });
+      }
+    });
+};
+
+// save users
+ShowsomeDb.prototype.saveUsers = function(users, callback) {
+    this.getCollectionUsers(function(error, users_collection) {
+      if( error ) callback(error)
+      else {
+        if( typeof(users.length)=="undefined")
+          users = [users];
+
+        for( var i =0;i< users.length;i++ ) {
+          user = users[i];
+          user.created_at = new Date();
+        }
+
+        users_collection.insert(users, function() {
+          callback(null, users);
         });
       }
     });
