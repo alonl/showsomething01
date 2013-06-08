@@ -110,7 +110,7 @@ app.post('/games', function(req, res) {
 });
 
 
-
+// gets a game from DB with the given id
 app.get('/game/:gameid', function(req, res) {
 	
 	// the given id for the requested game
@@ -122,16 +122,76 @@ app.get('/game/:gameid', function(req, res) {
 			console.log(error);
 		} else {
 			res.send(result);
-			
 		}
 	});
 
 });
 
 
+app.get('/game/generate/:gameid/:diff', function(req, res) {
+	 
+	diff = req.params.diff;
+	gameID = req.params.gameid;
+	
+	var words;
+	var randomNumber;
+    var usedArray = [];
+    var chosenWords = [5];
+	
+	
+	// gets all the words from the given difficulty
+	showsomeDb.getWordByDiff(diff, function(error, words) {
+		
+		if (error) {
+			console.log("error getting words");
+		} else {
+		
+			console.log(words);
+			for (i = 0; i < 5; i++) {
+
+				randomNumber = Math.floor(Math.random() * words.length);
+	
+				if (i > 0) {
+
+					// makes sure we dont choose the same word twice
+					while (in_array(randomNumber, usedArray) != -1) {
+						randomNumber = Math.floor(Math.random() * words.length);
+					}
+
+				}
+
+				// choses a word
+				chosenWords[i] = words[randomNumber].word;
+				console.log(chosenWords[i]);
+
+				// prevent duplications	
+				usedArray[i] = randomNumber;
+			}
+			
+			// update database
+			// creates an instance of a relative game accordingly
+			newTurnInfoR = {
+				"gameID": gameID,
+				"word0": chosenWords[0],
+				"word1": chosenWords[1],
+				"word2": chosenWords[2],
+				"word3": chosenWords[3],
+				"word4": chosenWords[4],
+				"chosenWord": 0
+			};
+			//Database.turnInformationR.data.push(newTurnInfoR);
+			res.send(chosenWords);
+		
+		}
+		
+		
+	});
+
+});
+
 app.get('/momo', function(req, res) {
 	
-showsomeDb.save([
+showsomeDb.saveGames([
         {
             // a game object
             "uid0": "100002058341130",
@@ -150,6 +210,193 @@ showsomeDb.save([
             "uid1": "100002058341130",
             "next": "1",
             "role": "g"
+        }
+    ], function(callback) {});
+	
+
+	
+showsomeDb.saveWords([
+        {
+            // a word object
+            "difficulty": "1",
+            "word": "table"
+        },
+        {
+            "difficulty": "1",
+            "word": "chair"
+        },
+        {
+           "difficulty": "1",
+           "word": "car"
+        },
+		{
+            "difficulty": "1",
+            "word": "television"
+        },
+		{
+            "difficulty": "1",
+            "word": "couch"
+        },
+		{
+            "difficulty": "1",
+            "word": "radio"
+        },
+		{
+            "difficulty": "1",
+            "word": "keys"
+        },
+		{
+            "difficulty": "1",
+            "word": "computer"
+        },
+		{
+            "difficulty": "1",
+            "word": "watch"
+        },
+		{
+            "difficulty": "1",
+            "word": "shirt"
+        },
+		{
+            "difficulty": "1",
+            "word": "pants"
+        },
+		{
+            "difficulty": "1",
+            "word": "window"
+        },
+		{
+            "difficulty": "1",
+            "word": "ball"
+        },
+		{
+            "difficulty": "1",
+            "word": "arm"
+        },
+		{
+            "difficulty": "1",
+            "word": "mother"
+        },
+		{
+	
+            "difficulty": "2",
+            "word": "rain"
+        },
+		{
+            "difficulty": "2",
+            "word": "engine"
+        },
+		{
+            "difficulty": "2",
+            "word": "skateboard"
+        },
+		{
+            "difficulty": "2",
+            "word": "wave"
+        },
+		{
+            "difficulty": "2",
+            "word": "breakfast"
+        },
+		{
+            "difficulty": "2",
+            "word": "midnight"
+        },
+		{
+            "difficulty": "2",
+            "word": "friends"
+        },
+		{
+            "difficulty": "2",
+            "word": "bus"
+        },
+		{
+            "difficulty": "2",
+            "word": "brother"
+        },
+		{
+            "difficulty": "2",
+            "word": "mailman"
+        },
+		{
+            "difficulty": "2",
+            "word": "kinder"
+        },
+		{
+            "difficulty": "2",
+            "word": "fun"
+        },
+		{
+            "difficulty": "2",
+            "word": "blink"
+        },
+		{
+            "difficulty": "2",
+            "word": "game"
+        },
+		{
+            "difficulty": "3",
+            "word": "city"
+        },
+		{
+            "difficulty": "3",
+            "word": "girlfriend"
+        },
+		{
+            "difficulty": "3",
+            "word": "available"
+        },
+		{
+            "difficulty": "3",
+            "word": "flee"
+        },
+		{
+            "difficulty": "3",
+            "word": "porshe"
+        },
+		{
+            "difficulty": "3",
+            "word": "chaos"
+        },
+		{
+            "difficulty": "3",
+            "word": "crazy"
+        },
+		{
+            "difficulty": "3",
+            "word": "villa"
+        },
+		{
+            "difficulty": "3",
+            "word": "warrior"
+        },
+		{
+            "difficulty": "3",
+            "word": "love"
+        },
+		{
+            "difficulty": "3",
+            "word": "maiden"
+        },
+		{
+            "difficulty": "3",
+            "word": "slipknot"
+        },
+		{
+            "difficulty": "3",
+            "word": "9gag"
+        },
+		{
+            "difficulty": "3",
+            "word": "show"
+        },
+		{
+            "difficulty": "3",
+            "word": "try"
+        },
+		{
+            "difficulty": "3",
+            "word": "behavior"
         }
     ], function(callback) {});
 	console.log("SAVED");
@@ -191,4 +438,12 @@ function Game(gameID, opponentID, nextPlayer, nextRole) {
     this.opponentID = opponentID;
     this.nextPlayer = nextPlayer;
     this.nextRole = nextRole;
+}
+
+function in_array(needle, haystack){
+ 
+    for (i = 0; i<haystack.length ;i++) {
+        if (haystack[i] == needle) return i;
+    }
+    return -1;
 }

@@ -737,6 +737,78 @@ function reloadPageMainMenu(pageSelector, callback) {
     $(pageSelector + 'Content').append('<ul data-role="listview" id="testlist" data-inset="true"></ul>');
 
     userActiveGames = [];
+
+    var ajaxcall = function(method, url, onready) {
+
+        var request = false;
+        request = new XMLHttpRequest();
+
+        if (request) {
+
+            request.open(method, url);
+            request.onreadystatechange = function() {
+                if (request.readyState == 4 &&
+                        request.status == 200) {
+                    onready(request);
+                }
+            };
+            request.send(null);
+        }
+    };
+
+    ajaxcall("GET", "games/" + uid, function(request) {
+
+        userActiveGames = JSON.parse(request.responseText);
+        console.log("Got active games: " + JSON.stringify(userActiveGames));
+        if (userActiveGames != null)
+        {
+            for (i = 0; i < userActiveGames.length; ++i) {
+                gameId = userActiveGames[i]._id;
+                opponentID = userActiveGames[i].opponentID;
+                setNameInHtml(opponentID);
+                photo = 'http://graph.facebook.com/' + opponentID + '/picture?width=80&height=80';
+                nextPlayer = userActiveGames[i].nextPlayer;
+                nextRole = userActiveGames[i].nextRole;
+                actionMessage = "";
+                link = "";
+                if (nextPlayer == 0) {
+                    actionMessage = 'Waiting for <span class="' + opponentID + 'Name"></span> to move.';
+                    link = '';
+                } else if (nextRole == "r") {
+                    actionMessage = "Your Move!";
+                    link = 'href="javascript: yourTurnRiddler(userActiveGames[' + i + ']);"';
+                } else { // nextRole == "g"
+                    actionMessage = "Your Move!";
+                    link = 'href="javascript: yourTurnGuesser(userActiveGames[' + i + ']);"';
+                }
+                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a></li>';
+                $("#testlist").append(gameItem);
+            }
+
+            $page = $(pageSelector);
+            $content = $page.children(":jqmData(role=content)");
+
+            // Pages are lazily enhanced. We call page() on the page
+            // element to make sure it is always enhanced before we
+            // attempt to enhance the listview markup we just injected.
+            // Subsequent calls to page() are ignored since a page/widget
+            // can only be enhanced once.
+            $page.page();
+
+            // Enhance the listview we just injected.
+            $content.find(":jqmData(role=listview)").listview();
+
+            // We don't want the data-url of the page we just modified
+            // to be the url that shows up in the browser's location field,
+            // so set the dataUrl option to the URL for the category
+            // we just loaded.
+//    options.dataUrl = u.href;
+
+            callback();
+        }
+
+    });
+
     Server.getActiveGames(uid, function() {
         for (i = 0; i < userActiveGames.length; ++i) {
             gameId = userActiveGames[i]._id;
@@ -804,12 +876,12 @@ function reloadPageNewGame(pageSelector, callback) {
     registeredUsers = Server.getRegisteredUsers();
 
     FB.api('/me/friends', function(response) {
-      
+
         // sorts the response array by the users' names
         response.data.sort(sort_by('name', true, function(a) {
             return a.toUpperCase();
         }));
-        
+
         for (i = 0; i < response.data.length; i++) {
             if ($.inArray(response.data[i].id, registeredUsers) > -1) {
                 if (!isInActiveGames(response.data[i].id)) {

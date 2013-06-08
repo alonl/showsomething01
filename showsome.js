@@ -34,6 +34,19 @@ ShowsomeDb.prototype.findAll = function(callback) {
     });
 };
 
+// finds all words with the given difficulty
+ShowsomeDb.prototype.getWordByDiff = function (diff, callback) {
+	  this.getCollection(function(error, words_collection) {
+      if(error) callback(error)
+      else {
+        words_collection.find({difficulty: diff}).toArray(function(error, results) {
+          if( error ) callback(error)
+          else callback(null, results)
+        });
+      }
+    });
+};
+
 // we wrote
 ShowsomeDb.prototype.getActiveGames = function(uid, callback) {
     this.getCollection(function(error, games_collection) {
@@ -47,8 +60,8 @@ ShowsomeDb.prototype.getActiveGames = function(uid, callback) {
     });
 };
 
-//save new game
-ShowsomeDb.prototype.save = function(games, callback) {
+//save new games
+ShowsomeDb.prototype.saveGames = function(games, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
       else {
@@ -62,6 +75,26 @@ ShowsomeDb.prototype.save = function(games, callback) {
 
        id = games_collection.insert(games, function() {
           callback(null, games);
+        });
+      }
+    });
+};
+
+//save new words
+ShowsomeDb.prototype.saveWords = function(words, callback) {
+    this.getCollection(function(error, words_collection) {
+      if( error ) callback(error)
+      else {
+        if( typeof(words.length)=="undefined")
+          words = [words];
+
+        for( var i =0;i< words.length;i++ ) {
+          word = words[i];
+          word.created_at = new Date();
+        }
+
+        words_collection.insert(words, function() {
+          callback(null, words);
         });
       }
     });
