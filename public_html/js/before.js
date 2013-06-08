@@ -128,33 +128,34 @@ Server.getRegisteredUsers = function() {
     return Database.registeredUsers;
 };
 
+// TODO: delete!
 /**
  * Gets the current active games
  * @param {type} uid
  * @param {type} callback
  * @returns {undefined}
  */
-Server.getActiveGames = function(uid, callback) {
-
-    // get the active games of the current user from db
-    activeGamesDb = Database.activeGames.data;
-    for (i = 0; i < activeGamesDb.length; ++i) {
-        if (activeGamesDb[i].uid0 == uid) {
-            game = new Game(activeGamesDb[i]._id, activeGamesDb[i].uid1, 1 - activeGamesDb[i].next, activeGamesDb[i].role);
-        } else if (activeGamesDb[i].uid1 == uid) {
-            game = new Game(activeGamesDb[i]._id, activeGamesDb[i].uid0, activeGamesDb[i].next, activeGamesDb[i].role);
-        } else {
-            // skip
-            continue;
-        }
-
-        // adds the appropriate games to current games for this user
-        userActiveGames.push(game);
-    }
-
-    // informs the function which called it that userActiveGames is ready
-    callback();
-};
+//Server.getActiveGames = function(uid, callback) {
+//
+//    // get the active games of the current user from db
+//    activeGamesDb = Database.activeGames.data;
+//    for (i = 0; i < activeGamesDb.length; ++i) {
+//        if (activeGamesDb[i].uid0 == uid) {
+//            game = new Game(activeGamesDb[i]._id, activeGamesDb[i].uid1, 1 - activeGamesDb[i].next, activeGamesDb[i].role);
+//        } else if (activeGamesDb[i].uid1 == uid) {
+//            game = new Game(activeGamesDb[i]._id, activeGamesDb[i].uid0, activeGamesDb[i].next, activeGamesDb[i].role);
+//        } else {
+//            // skip
+//            continue;
+//        }
+//
+//        // adds the appropriate games to current games for this user
+//        userActiveGames.push(game);
+//    }
+//
+//    // informs the function which called it that userActiveGames is ready
+//    callback();
+//};
 
 /**
  * Gets a game (not a relative game object) from the database
@@ -807,52 +808,6 @@ function reloadPageMainMenu(pageSelector, callback) {
             callback();
         }
 
-    });
-
-    Server.getActiveGames(uid, function() {
-        for (i = 0; i < userActiveGames.length; ++i) {
-            gameId = userActiveGames[i]._id;
-            opponentID = userActiveGames[i].opponentID;
-            setNameInHtml(opponentID);
-            photo = 'http://graph.facebook.com/' + opponentID + '/picture?width=80&height=80';
-            nextPlayer = userActiveGames[i].nextPlayer;
-            nextRole = userActiveGames[i].nextRole;
-            actionMessage = "";
-            link = "";
-            if (nextPlayer == 0) {
-                actionMessage = 'Waiting for <span class="' + opponentID + 'Name"></span> to move.';
-                link = '';
-            } else if (nextRole == "r") {
-                actionMessage = "Your Move!";
-                link = 'href="javascript: yourTurnRiddler(userActiveGames[' + i + ']);"';
-            } else { // nextRole == "g"
-                actionMessage = "Your Move!";
-                link = 'href="javascript: yourTurnGuesser(userActiveGames[' + i + ']);"';
-            }
-            gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a></li>';
-            $("#testlist").append(gameItem);
-        }
-
-        $page = $(pageSelector);
-        $content = $page.children(":jqmData(role=content)");
-
-        // Pages are lazily enhanced. We call page() on the page
-        // element to make sure it is always enhanced before we
-        // attempt to enhance the listview markup we just injected.
-        // Subsequent calls to page() are ignored since a page/widget
-        // can only be enhanced once.
-        $page.page();
-
-        // Enhance the listview we just injected.
-        $content.find(":jqmData(role=listview)").listview();
-
-        // We don't want the data-url of the page we just modified
-        // to be the url that shows up in the browser's location field,
-        // so set the dataUrl option to the URL for the category
-        // we just loaded.
-//    options.dataUrl = u.href;
-
-        callback();
     });
 
 }
