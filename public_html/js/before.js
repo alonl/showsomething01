@@ -113,7 +113,7 @@ var ajaxcall = function(method, url, onready, body) {
                 onready(request);
             }
         };
-        request.send("{" + body + "}");
+        request.send(body);
     }
 };
 
@@ -340,7 +340,7 @@ Server.generateWords = function(gameID, diff, callback) {
         "word2": chosenWords[2],
         "word3": chosenWords[3],
         "word4": chosenWords[4],
-        "chosenWord": 0
+        "chosenWord": -1
     };
 
     // update database
@@ -489,7 +489,7 @@ function yourTurnRiddler(game) {
 
             // check if a word was already chosen
             chosenWord = response.chosenWord;
-            if (chosenWord == 0) {
+            if (chosenWord == -1) {
 
                 // move to pageGeneratedWords with chosen words
                 chosenWords = [];
@@ -585,12 +585,11 @@ function validateGuess() {
  * @returns {undefined}
  */
 function createNewGame(opponentID) {
-    // updated server
-    ajaxcall("POST", "/games", function(request) {
+    ajaxcall("POST", "games", function(request) {
         game = JSON.parse(request.responseText);
         currentGameID = game._id;
         yourTurnRiddler(game);
-    }, "uid0: " + uid + ", uid1: " + opponentID);
+    }, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}');
 }
 
 /**
@@ -830,50 +829,55 @@ function reloadPageNewGame(pageSelector, callback) {
     $page = $(pageSelector);
     $content = $page.children(":jqmData(role=content)");
 
-    registeredUsers = Server.getRegisteredUsers();
+    ajaxcall("GET", "users", function(request) {
 
-    FB.api('/me/friends', function(response) {
+        registeredUsers = JSON.parse(request.responseText);
+        console.log("Got registered users: " + JSON.stringify(registeredUsers));
 
-        // sorts the response array by the users' names
-        response.data.sort(sort_by('name', true, function(a) {
-            return a.toUpperCase();
-        }));
+        FB.api('/me/friends', function(response) {
 
-        for (i = 0; i < response.data.length; i++) {
-            if ($.inArray(response.data[i].id, registeredUsers) > -1) {
-                if (!isInActiveGames(response.data[i].id)) {
-                    id = response.data[i].id;
-                    name = response.data[i].name;
-                    actionMessage = "Start a new game with " + name + "!";
-                    photo = 'http://graph.facebook.com/' + id + '/picture?width=80&height=80';
-                    link = 'href="javascript: createNewGame(' + id + ');"';
-                    friendItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2>' + name + '</h2><p>' + actionMessage + '</p></a></li>';
-                    $("#friendsList").append(friendItem);
+            // sorts the response array by the users' names
+            response.data.sort(sort_by('name', true, function(a) {
+                return a.toUpperCase();
+            }));
+
+            for (i = 0; i < response.data.length; i++) {
+                if ($.inArray(response.data[i].id, registeredUsers) > -1) {
+                    if (!isInActiveGames(response.data[i].id)) {
+                        id = response.data[i].id;
+                        name = response.data[i].name;
+                        actionMessage = "Start a new game with " + name + "!";
+                        photo = 'http://graph.facebook.com/' + id + '/picture?width=80&height=80';
+                        link = 'href="javascript: createNewGame(' + id + ');"';
+                        friendItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2>' + name + '</h2><p>' + actionMessage + '</p></a></li>';
+                        $("#friendsList").append(friendItem);
+                    }
                 }
             }
-        }
 
 
-        $page = $(pageSelector);
-        $content = $page.children(":jqmData(role=content)");
+            $page = $(pageSelector);
+            $content = $page.children(":jqmData(role=content)");
 
-        // Pages are lazily enhanced. We call page() on the page
-        // element to make sure it is always enhanced before we
-        // attempt to enhance the listview markup we just injected.
-        // Subsequent calls to page() are ignored since a page/widget
-        // can only be enhanced once.
-        $page.page();
+            // Pages are lazily enhanced. We call page() on the page
+            // element to make sure it is always enhanced before we
+            // attempt to enhance the listview markup we just injected.
+            // Subsequent calls to page() are ignored since a page/widget
+            // can only be enhanced once.
+            $page.page();
 
-        // Enhance the listview we just injected.
-        $content.find(":jqmData(role=listview)").listview();
+            // Enhance the listview we just injected.
+            $content.find(":jqmData(role=listview)").listview();
 
-        // We don't want the data-url of the page we just modified
-        // to be the url that shows up in the browser's location field,
-        // so set the dataUrl option to the URL for the category
-        // we just loaded.
+            // We don't want the data-url of the page we just modified
+            // to be the url that shows up in the browser's location field,
+            // so set the dataUrl option to the URL for the category
+            // we just loaded.
 //    options.dataUrl = u.href;
 
-        callback();
+            callback();
+
+        });
 
     });
 
