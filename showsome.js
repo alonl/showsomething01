@@ -212,12 +212,12 @@ ShowsomeDb.prototype.saveTurnInfoG = function(turn, image, callback) {
 		  turn.created_at = new Date();
 		  console.log("trying to upload image");
 		  
-		  if (image) {
+		/*  if (image) {
 				console.log("uploading image");
 				data = fs.readFileSync(image.path);
 				turn.photo = new MongoDb.Binary(data);
 				turn.photoType = image.type;
-		  }
+		  } */
 		  
 		  turnInfoG_collection.insert(turn, function() {
           callback(null, turn._id);
@@ -297,6 +297,23 @@ ShowsomeDb.prototype.deleteTurnInfoR = function (gameid) {
       }
     });
 };
+
+ShowsomeDb.prototype.deleteGame = function (gameid, callback) {
+	
+	this.getCollection(function(error, games_collection) {
+      if( error ) callback(false)
+      else {
+	  
+		// case one game was chosen for deletion
+		if (gameid == 'all') {
+			games_collection.remove();
+		} else {
+			games_collection.remove({_id: ObjectID(gameid)});
+		}
+		callback(true);
+      }
+    });
+}
 
 exports.ShowsomeDb = ShowsomeDb;
 
