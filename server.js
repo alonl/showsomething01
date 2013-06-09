@@ -205,9 +205,6 @@ app.get('/users', function (req, res) {
 		}
 		
 	});
-	
-
-
 });
 
 // update new user to registered users db
@@ -372,10 +369,11 @@ app.post('/turn/r', function (req, res) {
 	
 	req.on('end', function() {
 	
-		turn = JSON.parse(body);
+		turn = body;
 		
 		// gets the image
 		image = req.files.image;
+		image = "";
 		
 		showsomeDb.saveTurnInfoG(turn, image, function (error, result) {
 		
@@ -386,13 +384,14 @@ app.post('/turn/r', function (req, res) {
 			else  {
 				
 				// deletes the turn infoR from the db
-				success = showsomDb.deleteTurnInfoR(turn.gameID);
+				success = showsomeDb.deleteTurnInfoR(turn.gameID);
 				
 				if (!success) {
 					console.log("faild to delete turnInfoG with id: " + turn.gameID);
 				}
 				// response with the object id after success
-				res.send(turn._id);
+				//res.send(turn._id);
+				res.json({"photo": turn.photo});
 			} 
 			
 		});
@@ -403,6 +402,8 @@ app.post('/turn/r', function (req, res) {
 });
 
 app.get('/momo', function(req, res) {
+
+showsomeDb.deleteGame('all' ,function(callback) {}); // works fine
 	
 showsomeDb.saveGames([
         {
@@ -426,14 +427,14 @@ showsomeDb.saveGames([
         }
     ], function(callback) {});
 	
-showsomeDb.saveTurnInfoG([
+ /*showsomeDb.saveTurnInfoG([
 		{
             "gameID": "51ae579c2b7152cc24000003", // game id
             "word": "waterfall", // words for guesser to desctibe
             "photo": "img/waterfall2.jpg", // the photo of the word to describe
             "triesLeft": 5 //number of tries left (will be used in next version)
         }
-    ], function(callback) {});
+    ], function(callback) {}); */
 	
 	
 	
