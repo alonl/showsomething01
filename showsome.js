@@ -3,6 +3,7 @@ var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
+var fs = require("fs");
 
 
 //*****************************************************************************
@@ -203,12 +204,21 @@ ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
 };
 
 // saves turn information guesser in the database
-ShowsomeDb.prototype.saveTurnInfoG = function(turn, callback) {
+ShowsomeDb.prototype.saveTurnInfoG = function(turn, image, callback) {
     this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
       if( error ) callback(error)
       else {
 	  
 		  turn.created_at = new Date();
+		  console.log("trying to upload image");
+		  
+		  if (image) {
+				console.log("uploading image");
+				data = fs.readFileSync(image.path);
+				turn.photo = new MongoDb.Binary(data);
+				turn.photoType = image.type;
+		  }
+		  
 		  turnInfoG_collection.insert(turn, function() {
           callback(null, turn._id);
         });
@@ -236,7 +246,7 @@ ShowsomeDb.prototype.getTurnInfoR = function(id, callback) {
       else {
         turnInfoR_collection.find({'gameID': id}).toArray(function(error, result) {
           if(error) callback(error)
-          else callback(null, result[0])
+          else callback(null, result)
         }); 
       }
     });

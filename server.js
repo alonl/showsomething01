@@ -247,16 +247,20 @@ app.post('/users/:id', function (req, res) {
 	
 });
 
-// gets the turn information g according to the given game id
+// gets the turn information r according to the given game id
 app.get('/turn/r/:gameid', function(req, res) {
 	
 	gameid = req.params.gameid;
 	
 	showsomeDb.getTurnInfoR(gameid, function(error, result) {
 		if (error) {
-			console.log(error);
+			res.json(error, 400);
 		} else {
-			res.send(result);
+			if (result.length == 0) {
+				res.json('0');
+			} else {
+				res.send(result[0]);
+			}
 		}
 	});
 
@@ -323,7 +327,7 @@ app.get('/turn/g/:gameid' , function (req, res) {
 			copy = {
 				"gameID": result.gameID,
 				"word_length": result.word.length,
-				"photoUrl": result.photoUrl,
+				"photo": result.photo,
 				"tiresLeft": result.triesLeft
 			}
 			
@@ -358,6 +362,44 @@ app.put('/turn/r/:gameid', function(req, res) {
 	});
 });
 
+// makes a move as a riddler
+app.post('/turn/r', function (req, res) {
+
+	turn = ""
+	req.on('data', function(chunk) {
+		turn += chunk;
+	});
+	
+	req.on('end', function() {
+	
+		// gets the image
+		image = req.files.image;
+		
+		showsomeDb.saveTurnInfoG(turn, image, function (error, result) {
+		
+			if (error) {
+				res.json(error, 400);
+			}
+
+			else  {
+				
+				// deletes the turn infoR from the db
+				showsomDb.deleteTurnInfoR(turn.gameID, function (error, result) {
+					
+				});
+				
+				
+				// response with the object id after success
+				res.send(turn._id);
+			} 
+			
+		});
+		
+	});
+	
+
+});
+
 app.get('/momo', function(req, res) {
 	
 showsomeDb.saveGames([
@@ -386,7 +428,7 @@ showsomeDb.saveTurnInfoG([
 		{
             "gameID": "51ae579c2b7152cc24000003", // game id
             "word": "waterfall", // words for guesser to desctibe
-            "photoUrl": "img/waterfall2.jpg", // the photo of the word to describe
+            "photo": "img/waterfall2.jpg", // the photo of the word to describe
             "triesLeft": 5 //number of tries left (will be used in next version)
         }
     ], function(callback) {});
