@@ -1,4 +1,4 @@
-var express = require('express'); //stam
+var express = require('express');
 var showsome = require('./showsome');
 var ShowsomeDb = require('./showsome').ShowsomeDb;
 var http = require('http')
@@ -146,7 +146,6 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 			console.log("error getting words");
 		} else {
 		
-			console.log(words);
 			for (i = 0; i < 5; i++) {
 
 				randomNumber = Math.floor(Math.random() * words.length);
@@ -178,9 +177,13 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 				"word2": chosenWords[2],
 				"word3": chosenWords[3],
 				"word4": chosenWords[4],
-				"chosenWord": 0
+				"chosenWord": -1
 			};
-			//Database.turnInformationR.data.push(newTurnInfoR);
+			
+			// pushes the new move to database
+			showsomeDb.saveTurnInfoR(newTurnInfoR, function(error, newid) {
+			});
+			
 			res.send(chosenWords);
 		
 		}
@@ -242,6 +245,44 @@ app.post('/users/:id', function (req, res) {
 
 	});
 	
+});
+
+// gets the turn information g according to the given game id
+app.get('/turn/r/:gameid', function(req, res) {
+	
+	gameid = req.params.gameid;
+	
+	showsomeDb.getTurnInfoR(gameid, function(error, result) {
+		if (error) {
+			console.log(error);
+		} else {
+			res.send(result);
+		}
+	});
+
+});
+
+// updates the chosen word for the given game
+app.put('/turn/r/:gameid', function(req, res) {
+	
+	gameid = req.params.gameid;
+	chosenWord = "";
+	req.on('data', function(chunk) {
+		chosenWord += chunk;
+	});
+	req.on('end', function() {
+	
+		showsomeDb.updateChosenWord(gameid, chosenWord, function (error, result) {
+		
+			if (error) {
+				console.log(error);
+			} else {
+				res.send(result);
+			}
+			
+		});
+		
+	});
 });
 
 app.get('/momo', function(req, res) {

@@ -35,6 +35,13 @@ ShowsomeDb.prototype.getCollectionUsers = function(callback) {
   });
 };
 
+ShowsomeDb.prototype.getCollectionTurnInfoR = function(callback) {
+  this.db.collection('turnInfoR', function(error, turnInfoR_collection) {
+    if( error ) callback(error);
+    else callback(null, turnInfoR_collection);
+  });
+};
+
 // return all registered users
 ShowsomeDb.prototype.getAllUsers = function(callback) {
     this.getCollectionUsers(function(error, users_collection) {
@@ -174,16 +181,52 @@ ShowsomeDb.prototype.saveOne = function(game, callback) {
     });
 };
 
+// saves turn information riddler in the database
+ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
+    this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
+      if( error ) callback(error)
+      else {
+	  
+		  turn.created_at = new Date();
+		  turnInfoR_collection.insert(turn, function() {
+          callback(null, turn._id);
+        });
+      }
+    });
+};
+
 // find a single game in the game database
 ShowsomeDb.prototype.findOne = function(gameID, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
       else {
-		console.log(gameID);
         games_collection.find({_id: ObjectID(gameID)}).toArray(function(error, result) {
           if(error) callback(error)
           else callback(null, result[0])
         }); 
+      }
+    });
+};
+
+ShowsomeDb.prototype.getTurnInfoR = function(id, callback) {
+    this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
+      if( error ) callback(error)
+      else {
+        turnInfoR_collection.find({'gameID': id}).toArray(function(error, result) {
+          if(error) callback(error)
+          else callback(null, result[0])
+        }); 
+      }
+    });
+};
+
+// updates the turn information with the word given
+ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
+    this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
+      if( error ) callback(error)
+      else {
+        turnInfoR_collection.update({'gameID': gameid}, {$set: {'chosenWord': word}});
+		callback(null, word);
       }
     });
 };
