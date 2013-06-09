@@ -369,10 +369,11 @@ app.post('/turn/r', function (req, res) {
 	
 	req.on('end', function() {
 	
-		turn = body;
+		turn = JSON.stringify(body);
+		console.log(turn);
 		
 		// gets the image
-		image = req.files.image;
+		//image = req.files.image;
 		image = "";
 		
 		showsomeDb.saveTurnInfoG(turn, image, function (error, result) {
@@ -391,7 +392,7 @@ app.post('/turn/r', function (req, res) {
 				}
 				// response with the object id after success
 				//res.send(turn._id);
-				res.json({"photo": turn.photo});
+				res.send({"photo": turn.photo});
 			} 
 			
 		});
