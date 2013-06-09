@@ -297,56 +297,56 @@ Server.createNewGame = function(myID, otherID, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.generateWords = function(gameID, diff, callback) {
-    var words;
-    var randomNumber;
-    var usedArray = [];
-    var chosenWords = [5];
-
-    // determines what difficulty was chosen by the user
-    if (diff === 1) {
-        words = Database.easyWords;
-    } else if (diff === 2) {
-        words = Database.mediumWords;
-    } else {
-        words = Database.hardWords;
-    }
-
-    for (i = 0; i < 5; i++) {
-
-        randomNumber = Math.floor(Math.random() * 14);
-
-        if (i > 0) {
-
-            // makes sure we dont choose the same word twice
-            while ($.inArray(randomNumber, usedArray) > -1) {
-                randomNumber = Math.floor(Math.random() * 14);
-            }
-
-        }
-
-        // choses a word
-        chosenWords[i] = words[randomNumber];
-
-        // prevent duplications
-        usedArray[i] = randomNumber;
-    }
-
-    // creates an instance of a relative game accordingly
-    newTurnInfoR = {
-        "gameID": gameID,
-        "word0": chosenWords[0],
-        "word1": chosenWords[1],
-        "word2": chosenWords[2],
-        "word3": chosenWords[3],
-        "word4": chosenWords[4],
-        "chosenWord": -1
-    };
-
-    // update database
-    Database.turnInformationR.data.push(newTurnInfoR);
-    callback(chosenWords);
-};
+//Server.generateWords = function(gameID, diff, callback) {
+//    var words;
+//    var randomNumber;
+//    var usedArray = [];
+//    var chosenWords = [5];
+//
+//    // determines what difficulty was chosen by the user
+//    if (diff === 1) {
+//        words = Database.easyWords;
+//    } else if (diff === 2) {
+//        words = Database.mediumWords;
+//    } else {
+//        words = Database.hardWords;
+//    }
+//
+//    for (i = 0; i < 5; i++) {
+//
+//        randomNumber = Math.floor(Math.random() * 14);
+//
+//        if (i > 0) {
+//
+//            // makes sure we dont choose the same word twice
+//            while ($.inArray(randomNumber, usedArray) > -1) {
+//                randomNumber = Math.floor(Math.random() * 14);
+//            }
+//
+//        }
+//
+//        // choses a word
+//        chosenWords[i] = words[randomNumber];
+//
+//        // prevent duplications
+//        usedArray[i] = randomNumber;
+//    }
+//
+//    // creates an instance of a relative game accordingly
+//    newTurnInfoR = {
+//        "gameID": gameID,
+//        "word0": chosenWords[0],
+//        "word1": chosenWords[1],
+//        "word2": chosenWords[2],
+//        "word3": chosenWords[3],
+//        "word4": chosenWords[4],
+//        "chosenWord": -1
+//    };
+//
+//    // update database
+//    Database.turnInformationR.data.push(newTurnInfoR);
+//    callback(chosenWords);
+//};
 
 /**
  * find the game with the given ID and updates the chosen word accordingly
@@ -354,15 +354,15 @@ Server.generateWords = function(gameID, diff, callback) {
  * @param {type} chosenWord
  * @returns {undefined}
  */
-Server.saveChosenWord = function(gameID, chosenWord) {
-
-    // finds the currect game and updates the word
-    for (i = 0; i < Database.turnInformationR.data.length; i++) {
-        if (Database.turnInformationR.data[i].gameID === gameID) {
-            Database.turnInformationR.data[i].chosenWord = chosenWord;
-        }
-    }
-};
+//Server.saveChosenWord = function(gameID, chosenWord) {
+//
+//    // finds the currect game and updates the word
+//    for (i = 0; i < Database.turnInformationR.data.length; i++) {
+//        if (Database.turnInformationR.data[i].gameID === gameID) {
+//            Database.turnInformationR.data[i].chosenWord = chosenWord;
+//        }
+//    }
+//};
 
 /**
  * Updates the relevant game state after a complete move by the riddler 
@@ -475,7 +475,10 @@ function setNameInHtml(opponentID) {
 function yourTurnRiddler(game) {
 
     currentGameID = game._id;
-    Server.getTurnInformationR(game._id, function(response) {
+    
+    ajaxcall("GET", "turn/r/" + currentGameID, function(res){
+
+        response = JSON.parse(res.responseText);
 
         // no previous game was found
         if (response == 0) {
@@ -508,7 +511,12 @@ function yourTurnRiddler(game) {
                 gotoPagePrePictureScreen(chosenWord);
             }
         }
+
     });
+    
+//    Server.getTurnInformationR(game._id, function(response) {
+//
+//    });
 
 }
 
@@ -520,7 +528,8 @@ function transferChosenWord() {
 
     // finds out which word was checked
     chosenWord = $('#wordsPresented :checked').val();
-    Server.saveChosenWord(currentGameID, chosenWord);
+//    Server.saveChosenWord(currentGameID, chosenWord);
+    ajaxcall("PUT", "turn/r/" + currentGameID, function(){}, "chosenWord");
     gotoPagePrePictureScreen(chosenWord);
 }
 
@@ -530,9 +539,14 @@ function transferChosenWord() {
  * @returns {undefined}
  */
 function generateWords(diff) {
-    Server.generateWords(currentGameID, diff, function(response) {
-        updateChosenWords(response);
+    ajaxcall("GET", "game/generate/" + currentGameID + "/" + diff, function(response) {
+        words = JSON.parse(response.responseText);
+        updateChosenWords(words);
     });
+    
+//    Server.generateWords(currentGameID, diff, function(response) {
+//        updateChosenWords(response);
+//    });
 }
 
 /**
@@ -585,8 +599,8 @@ function validateGuess() {
  * @returns {undefined}
  */
 function createNewGame(opponentID) {
-    ajaxcall("POST", "games", function(request) {
-        game = JSON.parse(request.responseText);
+    ajaxcall("POST", "games", function(response) {
+        game = JSON.parse(response.responseText);
         currentGameID = game._id;
         yourTurnRiddler(game);
     }, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}');
@@ -758,9 +772,9 @@ function reloadPageMainMenu(pageSelector, callback) {
 
     userActiveGames = [];
 
-    ajaxcall("GET", "games/" + uid, function(request) {
+    ajaxcall("GET", "games/" + uid, function(response) {
 
-        userActiveGames = JSON.parse(request.responseText);
+        userActiveGames = JSON.parse(response.responseText);
         console.log("Got active games: " + JSON.stringify(userActiveGames));
         if (userActiveGames != null)
         {
@@ -829,9 +843,9 @@ function reloadPageNewGame(pageSelector, callback) {
     $page = $(pageSelector);
     $content = $page.children(":jqmData(role=content)");
 
-    ajaxcall("GET", "users", function(request) {
+    ajaxcall("GET", "users", function(response) {
 
-        registeredUsersDB = JSON.parse(request.responseText);
+        registeredUsersDB = JSON.parse(response.responseText);
         registeredUsers = [];
         
         console.log("Got registered users: " + JSON.stringify(registeredUsersDB));
