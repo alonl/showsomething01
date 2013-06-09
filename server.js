@@ -262,6 +262,79 @@ app.get('/turn/r/:gameid', function(req, res) {
 
 });
 
+app.post('/turn/g/:gameid', function(req, res) {
+	
+	gameid = req.params.gameid;
+	answer = ""
+	req.on('data', function(chunk) {
+		answer += chunk;
+	});
+	req.on('end', function() {
+	
+		// gets the turn info to check the word
+		showsomeDb.getTurnInfoG(gameid, function (error, result) {
+		
+			if (error) {
+				console.log(error);
+			} else {
+				
+				// user guessed right
+				if (answer.toUpperCase() == result.word.toUpperCase()) {
+					
+					// changes the game state to riddler
+					showsomeDb.updateGameState(gameid, 'r', function (error, result) {
+						
+						res.send(result);
+						
+						//getGame(gameid, function (result) {
+						//	console.log(result);
+						//});
+					});
+					
+				}
+
+				// wrong guess, return false
+				else {
+					
+					res.send('false');
+					
+				}
+			}
+			
+		});
+		
+	});
+
+});
+
+// gets turn information guessrr from the DB
+app.get('/turn/g/:gameid' , function (req, res) {
+	
+	gameid = req.params.gameid;
+	
+	showsomeDb.getTurnInfoG(gameid, function (error, result) {
+		
+		if (error) {
+			res.send(error);
+		} else {
+			
+			// makes a copy of the game object that not includes the words itself
+			// but its length
+			copy = {
+				"gameID": result.gameID,
+				"word_length": result.word.length,
+				"photoUrl": result.photoUrl,
+				"tiresLeft": result.triesLeft
+			}
+			
+			// result
+			res.send(copy);
+		}
+	});
+	
+	
+});
+
 // updates the chosen word for the given game
 app.put('/turn/r/:gameid', function(req, res) {
 	
@@ -308,6 +381,17 @@ showsomeDb.saveGames([
             "role": "g"
         }
     ], function(callback) {});
+	
+showsomeDb.saveTurnInfoG([
+		{
+            "gameID": "51ae579c2b7152cc24000003", // game id
+            "word": "waterfall", // words for guesser to desctibe
+            "photoUrl": "img/waterfall2.jpg", // the photo of the word to describe
+            "triesLeft": 5 //number of tries left (will be used in next version)
+        }
+    ], function(callback) {});
+	
+	
 	
 	
 showsomeDb.saveUsers([
@@ -594,4 +678,15 @@ function in_array(needle, haystack){
         if (haystack[i] == needle) return i;
     }
     return -1;
+}
+
+// gets a single game from db
+function getGame(gameid, callback) {
+		showsomeDb.findOne(gameid, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback(result);
+		}
+	});
 }

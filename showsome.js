@@ -42,6 +42,13 @@ ShowsomeDb.prototype.getCollectionTurnInfoR = function(callback) {
   });
 };
 
+ShowsomeDb.prototype.getCollectionTurnInfoG = function(callback) {
+  this.db.collection('turnInfoG', function(error, turnInfoG_collection) {
+    if( error ) callback(error);
+    else callback(null, turnInfoG_collection);
+  });
+};
+
 // return all registered users
 ShowsomeDb.prototype.getAllUsers = function(callback) {
     this.getCollectionUsers(function(error, users_collection) {
@@ -195,6 +202,21 @@ ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
     });
 };
 
+// saves turn information guesser in the database
+ShowsomeDb.prototype.saveTurnInfoG = function(turn, callback) {
+    this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
+      if( error ) callback(error)
+      else {
+	  
+		  turn.created_at = new Date();
+		  turnInfoG_collection.insert(turn, function() {
+          callback(null, turn._id);
+        });
+      }
+    });
+};
+
+
 // find a single game in the game database
 ShowsomeDb.prototype.findOne = function(gameID, callback) {
     this.getCollection(function(error, games_collection) {
@@ -220,6 +242,19 @@ ShowsomeDb.prototype.getTurnInfoR = function(id, callback) {
     });
 };
 
+// gets a turn information guesser from db
+ShowsomeDb.prototype.getTurnInfoG = function(id, callback) {
+    this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
+      if( error ) callback(error)
+      else {
+        turnInfoG_collection.find({'gameID': id}).toArray(function(error, result) {
+          if(error) callback(error)
+          else callback(null, result[0])
+        }); 
+      }
+    });
+};
+
 // updates the turn information with the word given
 ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
     this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
@@ -227,6 +262,17 @@ ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
       else {
         turnInfoR_collection.update({'gameID': gameid}, {$set: {'chosenWord': word}});
 		callback(null, word);
+      }
+    });
+};
+
+// updates the game state to "state"
+ShowsomeDb.prototype.updateGameState = function(gameid, state, callback) {
+    this.getCollection(function(error, games_collection) {
+      if( error ) callback(error)
+      else {
+        games_collection.update({_id: ObjectID(gameid)}, {$set: {'role': state}});
+		callback(null, 'true');
       }
     });
 };
