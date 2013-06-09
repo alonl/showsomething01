@@ -365,13 +365,15 @@ app.put('/turn/r/:gameid', function(req, res) {
 // makes a move as a riddler
 app.post('/turn/r', function (req, res) {
 
-	turn = ""
+	body = "";
 	req.on('data', function(chunk) {
-		turn += chunk;
+		body += chunk;
 	});
 	
 	req.on('end', function() {
 	
+		turn = JSON.parse(body);
+		
 		// gets the image
 		image = req.files.image;
 		
@@ -384,11 +386,11 @@ app.post('/turn/r', function (req, res) {
 			else  {
 				
 				// deletes the turn infoR from the db
-				showsomDb.deleteTurnInfoR(turn.gameID, function (error, result) {
-					
-				});
+				success = showsomDb.deleteTurnInfoR(turn.gameID);
 				
-				
+				if (!success) {
+					console.log("faild to delete turnInfoG with id: " + turn.gameID);
+				}
 				// response with the object id after success
 				res.send(turn._id);
 			} 

@@ -287,6 +287,17 @@ ShowsomeDb.prototype.updateGameState = function(gameid, state, callback) {
     });
 };
 
+// deletes a turnInfoR from db
+ShowsomeDb.prototype.deleteTurnInfoR = function (gameid) {
+	this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
+      if( error ) return('false')
+      else {
+        turnInfoR_collection.remove({'gameID': gameid});
+		return('true');
+      }
+    });
+};
+
 exports.ShowsomeDb = ShowsomeDb;
 
 
