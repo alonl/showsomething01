@@ -372,7 +372,7 @@ app.post('/turn/r', function (req, res) {
 	
 	req.on('end', function() {
 	
-		turn = JSON.parse(body);
+		turn = body;
 		
 		// gets the image
 		image = req.files.image;
@@ -386,7 +386,7 @@ app.post('/turn/r', function (req, res) {
 			else  {
 				
 				// deletes the turn infoR from the db
-				success = showsomDb.deleteTurnInfoR(turn.gameID);
+				success = showsomeDb.deleteTurnInfoR(turn.gameID);
 				
 				if (!success) {
 					console.log("faild to delete turnInfoG with id: " + turn.gameID);

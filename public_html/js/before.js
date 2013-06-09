@@ -441,7 +441,8 @@ function facebookLoggedIn() {
     connected = true;
 
     FB.api('/me', function(response) {
-        ajaxcall("POST", "users/" + response.id, function(){}, "");
+        ajaxcall("POST", "users/" + response.id, function() {
+        }, "");
         fullName = response.name;
         window.location = "#pageMainMenu?reload";
     });
@@ -475,8 +476,8 @@ function setNameInHtml(opponentID) {
 function yourTurnRiddler(game) {
 
     currentGameID = game._id;
-    
-    ajaxcall("GET", "turn/r/" + currentGameID, function(res){
+
+    ajaxcall("GET", "turn/r/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);
 
@@ -513,7 +514,7 @@ function yourTurnRiddler(game) {
         }
 
     });
-    
+
 //    Server.getTurnInformationR(game._id, function(response) {
 //
 //    });
@@ -529,7 +530,8 @@ function transferChosenWord() {
     // finds out which word was checked
     chosenWord = $('#wordsPresented :checked').val();
 //    Server.saveChosenWord(currentGameID, chosenWord);
-    ajaxcall("PUT", "turn/r/" + currentGameID, function(){}, chosenWord);
+    ajaxcall("PUT", "turn/r/" + currentGameID, function() {
+    }, chosenWord);
     gotoPagePrePictureScreen(chosenWord);
 }
 
@@ -543,7 +545,7 @@ function generateWords(diff) {
         words = JSON.parse(response.responseText);
         updateChosenWords(words);
     });
-    
+
 //    Server.generateWords(currentGameID, diff, function(response) {
 //        updateChosenWords(response);
 //    });
@@ -698,7 +700,21 @@ function filePreview() {
 function fileUpload() {
     // TODO: upload file to the server
     alert("The picture will be sent to your friend! (Not implemented yet)");
-    makeMoveRiddler(currentGameID);
+
+    file = document.getElementById('fileToUpload').files[0];
+    reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(event) {
+        var result = event.target.result;
+        var fileName = document.getElementById('fileToUpload').files[0].name; //Should be 'picture.jpg'
+        // TODO: check if the object sent is correct
+        ajaxcall("POST", "/turn/r", function(){}, { gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5 });
+        console.log("result = " + result);
+        console.log("name = " + fileName);
+        makeMoveRiddler(currentGameID);
+    };
+
+    
 }
 
 /**
@@ -847,9 +863,9 @@ function reloadPageNewGame(pageSelector, callback) {
 
         registeredUsersDB = JSON.parse(response.responseText);
         registeredUsers = [];
-        
+
         console.log("Got registered users: " + JSON.stringify(registeredUsersDB));
-        
+
         // creates an array of only user id's
         for (i = 0; i < registeredUsersDB.length; ++i) {
             registeredUsers.push(registeredUsersDB[i].uid);
