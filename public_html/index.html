@@ -140,7 +140,8 @@
                 <form id="sendPicture" enctype="multipart/form-data" method="post" action="/turn/r">
                     <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);" class="hidden-button"/>
                     <!--TODO: check maximum file size-->
-                    <input type="button" onclick="fileUpload();" value="ShowIt!" />
+                    <!--<input type="button" onclick="fileUpload();" value="ShowIt!" />-->
+                    <input type="submit" value="ShowIt!" />
                 </form>
                 <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>		
             </footer>

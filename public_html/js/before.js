@@ -529,7 +529,7 @@ function transferChosenWord() {
     // finds out which word was checked
     chosenWord = $('#wordsPresented :checked').val();
 //    Server.saveChosenWord(currentGameID, chosenWord);
-    ajaxcall("PUT", "turn/r/" + currentGameID, function(){}, "chosenWord");
+    ajaxcall("PUT", "turn/r/" + currentGameID, function(){}, chosenWord);
     gotoPagePrePictureScreen(chosenWord);
 }
 
