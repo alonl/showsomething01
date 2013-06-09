@@ -441,7 +441,7 @@ function facebookLoggedIn() {
     connected = true;
 
     FB.api('/me', function(response) {
-        Server.registerUser(response.id);
+        ajaxcall("POST", "users/" + response.id, function(){}, "");
         fullName = response.name;
         window.location = "#pageMainMenu?reload";
     });
@@ -831,8 +831,15 @@ function reloadPageNewGame(pageSelector, callback) {
 
     ajaxcall("GET", "users", function(request) {
 
-        registeredUsers = JSON.parse(request.responseText);
-        console.log("Got registered users: " + JSON.stringify(registeredUsers));
+        registeredUsersDB = JSON.parse(request.responseText);
+        registeredUsers = [];
+        
+        console.log("Got registered users: " + JSON.stringify(registeredUsersDB));
+        
+        // creates an array of only user id's
+        for (i = 0; i < registeredUsersDB.length; ++i) {
+            registeredUsers.push(registeredUsersDB[i].uid);
+        }
 
         FB.api('/me/friends', function(response) {
 
