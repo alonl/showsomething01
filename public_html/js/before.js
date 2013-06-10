@@ -560,14 +560,46 @@ function yourTurnGuesser(game) {
     //currentGameID =game._id;
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
-    Server.getTurnInformationGLength(game._id, function(response) {
-        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photoUrl + '">');
+
+    // TODO: here111
+
+    ajaxcall("GET", "turn/g/" + game._id, function() {
+//        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photo + '">');
+
+
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var dataUri = event.target.result,
+                    img = document.createElement("img");
+
+            img.src = dataUri;
+//        document.body.appendChild(img);
+            $("#riddleImageDiv").append(img);
+        };
+
+        reader.onerror = function(event) {
+            console.error("File could not be read! Code " + event.target.error.code);
+        };
+
+        reader.readAsDataURL(response.photo);
+
+
+
         $("#riddleAnswer").attr('maxlength', response.word);
         $("#riddleAnswer").attr('placeholder', 'word length is: ' + response.word);
         $("#riddleGameId").attr('value', game._id);
 
         window.location = "#pageGuess";
     });
+
+//    Server.getTurnInformationGLength(game._id, function(response) {
+//        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photoUrl + '">');
+//        $("#riddleAnswer").attr('maxlength', response.word);
+//        $("#riddleAnswer").attr('placeholder', 'word length is: ' + response.word);
+//        $("#riddleGameId").attr('value', game._id);
+//
+//        window.location = "#pageGuess";
+//    });
 }
 
 /**
@@ -708,13 +740,14 @@ function fileUpload() {
         var result = event.target.result;
         var fileName = document.getElementById('fileToUpload').files[0].name; //Should be 'picture.jpg'
         // TODO: check if the object sent is correct
-        ajaxcall("POST", "/turn/r", function(){}, { gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5 });
+        ajaxcall("POST", "/turn/r", function() {
+        }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
         console.log("result = " + result);
         console.log("name = " + fileName);
         makeMoveRiddler(currentGameID);
     };
 
-    
+
 }
 
 /**
