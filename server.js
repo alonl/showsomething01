@@ -181,7 +181,8 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 			};
 			
 			// pushes the new move to database
-			showsomeDb.saveTurnInfoR(newTurnInfoR, function(error, newid) {
+			showsomeDb.saveTurnInfoR(newTurnInfoR, function(error, result) {
+				console.log("newly puted newTurnInfoR with game id: " + result.gameID);
 			});
 			
 			res.send(chosenWords);
