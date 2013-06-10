@@ -369,7 +369,7 @@ app.post('/turn/r', function (req, res) {
 	
 	req.on('end', function() {
 	
-		turn = JSON.stringify(body);
+		turn = body;
 		console.log(turn);
 		
 		// gets the image
