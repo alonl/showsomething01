@@ -323,9 +323,9 @@ app.get('/turn/g/:gameid' , function (req, res) {
 			// but its length
 			copy = {
 				"gameID": result.gameID,
-				"word_length": result.word.length,
+				"word": result.word.length,
 				"photo": result.photo,
-				"tiresLeft": result.triesLeft
+				"triesLeft": result.triesLeft
 			}
 			
 			// result
