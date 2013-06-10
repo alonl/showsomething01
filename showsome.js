@@ -197,7 +197,7 @@ ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
 	  
 		  turn.created_at = new Date();
 		  turnInfoR_collection.insert(turn, function() {
-          callback(null, turn._id);
+          callback(null, turn);
         });
       }
     });
