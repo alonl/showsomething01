@@ -396,7 +396,7 @@ app.post('/turn/r', function (req, res) {
 				}
 				// response with the object id after success
 				//res.send(turn._id);
-				res.send({"photo": turn.photo});
+				res.send("updated");
 			} 
 			
 		});
