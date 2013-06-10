@@ -563,7 +563,7 @@ function yourTurnGuesser(game) {
 
     // TODO: here111
 
-    ajaxcall("GET", "turn/g/" + game._id, function() {
+    ajaxcall("GET", "turn/g/" + game._id, function(response) {
 //        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photo + '">');
 
 
@@ -573,7 +573,7 @@ function yourTurnGuesser(game) {
                     img = document.createElement("img");
 
             img.src = dataUri;
-//        document.body.appendChild(img);
+            document.body.appendChild(img); // TODO: delete?
             $("#riddleImageDiv").append(img);
         };
 
