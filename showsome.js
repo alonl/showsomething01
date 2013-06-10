@@ -277,11 +277,22 @@ ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
 };
 
 // updates the game state to "state"
-ShowsomeDb.prototype.updateGameState = function(gameid, state, callback) {
+ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
       else {
-        games_collection.update({_id: ObjectID(gameid)}, {$set: {'role': state}});
+	  
+        games_collection.update({_id: ObjectID(gameid)}, {$set: {'role': newRole}});
+		
+		if (next != true) {
+			games_collection.find({_id: ObjectID(gameID)}).toArray(function(error, result) {
+				if(error) callback(error)
+				else {
+				newNext = 1 - result[0].next;
+				games_collection.update({_id: ObjectID(gameid)}, {$set: {'next': newNext}});
+				}
+			});
+		}
 		callback(null, 'true');
       }
     });

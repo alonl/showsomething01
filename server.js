@@ -283,7 +283,7 @@ app.post('/turn/g/:gameid', function(req, res) {
 				if (answer.toUpperCase() == result.word.toUpperCase()) {
 					
 					// changes the game state to riddler
-					showsomeDb.updateGameState(gameid, 'r', function (error, result) {
+					showsomeDb.updateGameState(gameid, 'r', false, function (error, result) {
 						
 						res.send(result);
 						
@@ -383,6 +383,9 @@ app.post('/turn/r', function (req, res) {
 			}
 
 			else  {
+				
+				// updates the game state
+				showsomeDb.updateGameState(turn.gameID, 'g', true, function(error, result) {});
 				
 				// deletes the turn infoR from the db
 				success = showsomeDb.deleteTurnInfoR(turn.gameID);
