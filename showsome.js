@@ -299,12 +299,23 @@ ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback)
 };
 
 // deletes a turnInfoR from db
-ShowsomeDb.prototype.deleteTurnInfoR = function (gameid) {
+ShowsomeDb.prototype.deleteTurnInfoR = function (gameid, callback) {
 	this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
-      if( error ) {return false}
+      if( error ) {callback(false);}
       else {
         turnInfoR_collection.remove({'gameID': gameid});
-		return true;
+		callbac(true);
+      }
+    });
+};
+
+// deletes turninfoG from db
+ShowsomeDb.prototype.deleteTurnInfoG = function (gameid, callback) {
+	this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
+      if( error ) {return false}
+      else {
+        turnInfoG_collection.remove({'gameID': gameid});
+		callback;
       }
     });
 };
