@@ -348,9 +348,6 @@ app.get('/turn/g/:gameid/photo' , function (req, res) {
 		} else {
 			
 			//return only the image of this game (ommits the object id)
-		//	copy = {
-		//		"photo": result.photo
-		//	}
 			res.send(result.photo);
 		}
 	});
@@ -423,7 +420,44 @@ app.post('/turn/r', function (req, res) {
 		
 	});
 	
+});
 
+app.delete('/game/:gameid', function (req, res) {
+
+	gameid = req.params.gameid;
+	
+	// deletes the game
+	showsomeDb.deleteGame(gameid, function(result) {
+		
+		// bad deletion,
+		if (!result) {
+			res.send("error removing the game: " + gameid);
+		}
+		
+		// good deletion
+		else {
+			
+			//deletes turnInfoG
+			showsomeDb.deleteTurnInfoG(gameid, function(result){
+				res1 = result;
+			});
+			
+			//deletes turnInfoR
+			showsomeDb.deleteTurnInfoR(gameid, function(result){
+				res2 = result;
+			});
+			
+			if (res1 && res2) {
+				res.send("Successfuly deleted game: " + gameid);
+			} else if (!res1){
+				res.send("unable to delete turnInfoG with gameid: " + gameid);
+			} else {
+				res.send("unable to delete turnInfoR with gameid: " + gameid);
+			}
+			
+		}
+	});
+	
 });
 
 app.get('/momo', function(req, res) {

@@ -325,14 +325,15 @@ ShowsomeDb.prototype.deleteTurnInfoR = function (gameid, callback) {
 // deletes turninfoG from db
 ShowsomeDb.prototype.deleteTurnInfoG = function (gameid, callback) {
 	this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
-      if( error ) {return false}
+      if( error ) {callback(false);}
       else {
         turnInfoG_collection.remove({'gameID': gameid});
-		callback;
+		callback(true);
       }
     });
 };
 
+// deletes a game instance from db
 ShowsomeDb.prototype.deleteGame = function (gameid, callback) {
 	
 	this.getCollection(function(error, games_collection) {
