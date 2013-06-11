@@ -666,6 +666,12 @@ function isInActiveGames(userID) {
     return false;
 }
 
+function deleteGame(gameID) {
+    ajaxcall("DELETE", "/game/" + gameID, function(){
+        alert("The game has been deleted.");
+    });
+}
+
 //*****************************************************************************
 // Page constructing helper functions
 //*****************************************************************************
@@ -826,7 +832,7 @@ function reloadPageMainMenu(pageSelector, callback) {
 
     $(pageSelector + 'Content').append('<div><a href="#pageNewGame?reload" data-role="button" data-transition="flip">Create New Game</a></div>');
 
-    $(pageSelector + 'Content').append('<ul data-role="listview" id="testlist" data-inset="true"></ul>');
+    $(pageSelector + 'Content').append('<ul data-role="listview" id="testlist" data-inset="true" data-split-icon="delete"></ul>');
 
     userActiveGames = [];
 
@@ -855,7 +861,7 @@ function reloadPageMainMenu(pageSelector, callback) {
                     actionMessage = "Your Move!";
                     link = 'href="javascript: yourTurnGuesser(userActiveGames[' + i + ']);"';
                 }
-                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a><a href=""></a></li>';
+                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a><a href="javascript: deleteGame(\'' + gameId + '\');" class="fix-border"></a></li>';
                 $("#testlist").append(gameItem);
             }
 
