@@ -325,7 +325,6 @@ app.get('/turn/g/:gameid' , function (req, res) {
 			copy = {
 				"gameID": result.gameID,
 				"word": result.word.length,
-				"photo": result.photo,
 				"triesLeft": result.triesLeft
 			}
 			
@@ -334,6 +333,27 @@ app.get('/turn/g/:gameid' , function (req, res) {
 		}
 	});
 	
+	
+});
+
+// gets the image of the current turnInfoG
+app.get('/turn/g/:gameid/photo' , function (req, res) {
+
+	gameid = req.params.gameid;
+	
+	showsomeDb.getPhoto(gameid, function (error, result) {
+		
+		if (error) {
+			res.send(error);
+		} else {
+			
+			//return only the image of this game (ommits the object id)
+			copy = {
+				"photo": result.photo
+			}
+			res.send(copy);
+		}
+	});
 	
 });
 
@@ -371,34 +391,34 @@ app.post('/turn/r', function (req, res) {
 	req.on('end', function() {
 	
 		turn = JSON.parse(body);
-		console.log(turn);
 		
-		// gets the image
-		//image = req.files.image;
-		image = "";
-		
-		showsomeDb.saveTurnInfoG(turn, image, function (error, result) {
+		// delete prior turnInfoG with same game id (if any)
+		showsomeDb.deleteTurnInfoG(turn.gameID, function() {});
+
+		// saves the new turnInfoG
+		showsomeDb.saveTurnInfoG(turn, function (error, result) {
 		
 			if (error) {
 				res.json(error, 400);
 			}
-
 			else  {
 				
 				// updates the game state
 				showsomeDb.updateGameState(turn.gameID, 'g', true, function(error, result) {});
 				
 				// deletes the turn infoR from the db
-				success = showsomeDb.deleteTurnInfoR(turn.gameID);
+				showsomeDb.deleteTurnInfoR(turn.gameID, function(result) {
+					success = result;
+				});
 				
 				if (!success) {
-					console.log("faild to delete turnInfoG with id: " + turn.gameID);
+					console.log("faild to delete turnInfoR with id: " + turn.gameID);
 				}
 				// response with the object id after success
 				//res.send(turn._id);
 				res.send("updated");
 			} 
-			
+				
 		});
 		
 	});
