@@ -181,14 +181,14 @@ Server = {};
  * @param {type} callback
  * @returns {undefined}
  */
-Server.getGame = function(gameID, callback) {
-    for (i = 0; i < Database.activeGames.data.length; ++i) {
-        if (Database.activeGames.data[i]._id == gameID) {
-            game = Database.activeGames.data[i];
-            callback(game);
-        }
-    }
-};
+//Server.getGame = function(gameID, callback) {
+//    for (i = 0; i < Database.activeGames.data.length; ++i) {
+//        if (Database.activeGames.data[i]._id == gameID) {
+//            game = Database.activeGames.data[i];
+//            callback(game);
+//        }
+//    }
+//};
 
 /**
  * Gets a copy for a relative active game for this user as a guesser
@@ -196,19 +196,19 @@ Server.getGame = function(gameID, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.getTurnInformationG = function(gameID, callback) {
-    // get the turn information from db
-    for (i = 0; i < Database.turnInformationG.data.length; ++i) {
-        if (Database.turnInformationG.data[i].gameID == gameID) {
-
-            // uses a copy of the originala game for further manipulation
-            game = TurnInfoGCopy(Database.turnInformationG.data[i]);
-            callback(game);
-        }
-    }
-    // didnt find game - does not suppose to happen
-    callback(0);
-};
+//Server.getTurnInformationG = function(gameID, callback) {
+//    // get the turn information from db
+//    for (i = 0; i < Database.turnInformationG.data.length; ++i) {
+//        if (Database.turnInformationG.data[i].gameID == gameID) {
+//
+//            // uses a copy of the originala game for further manipulation
+//            game = TurnInfoGCopy(Database.turnInformationG.data[i]);
+//            callback(game);
+//        }
+//    }
+//    // didnt find game - does not suppose to happen
+//    callback(0);
+//};
 
 /**
  * Looks for a relative active game for this user as a riddler
@@ -216,19 +216,19 @@ Server.getTurnInformationG = function(gameID, callback) {
  * @param {type} callback
  * @returns {unresolved}
  */
-Server.getTurnInformationR = function(gameId, callback) {
-
-    // finds active game if any
-    for (i = 0; i < Database.turnInformationR.data.length; i++) {
-        if (Database.turnInformationR.data[i].gameID === gameId) {
-            callback(Database.turnInformationR.data[i]);
-            return;
-        }
-    }
-
-    // didnt find game
-    callback(0);
-};
+//Server.getTurnInformationR = function(gameId, callback) {
+//
+//    // finds active game if any
+//    for (i = 0; i < Database.turnInformationR.data.length; i++) {
+//        if (Database.turnInformationR.data[i].gameID === gameId) {
+//            callback(Database.turnInformationR.data[i]);
+//            return;
+//        }
+//    }
+//
+//    // didnt find game
+//    callback(0);
+//};
 
 /**
  * Return the game information for turn = guesser, but return the word length instead of the word itself
@@ -236,12 +236,12 @@ Server.getTurnInformationR = function(gameId, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.getTurnInformationGLength = function(gameID, callback) {
-    Server.getTurnInformationG(gameID, function(game) {
-        game.word = game.word.length;
-        callback(game);
-    });
-};
+//Server.getTurnInformationGLength = function(gameID, callback) {
+//    Server.getTurnInformationG(gameID, function(game) {
+//        game.word = game.word.length;
+//        callback(game);
+//    });
+//};
 
 /**
  * Checks if the guesser guessed the game,
@@ -252,22 +252,22 @@ Server.getTurnInformationGLength = function(gameID, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.validateGuess = function(gameId, answer, callback) {
-    Server.getTurnInformationG(gameId, function(game2) {
-        if (game2.word.toUpperCase() == answer.toUpperCase()) {
-
-            Server.getGame(gameId, function(game) {
-
-                // change the game state
-                game.role = "r";
-
-                callback(true);
-            });
-        } else {
-            callback(false);
-        }
-    });
-};
+//Server.validateGuess = function(gameId, answer, callback) {
+//    Server.getTurnInformationG(gameId, function(game2) {
+//        if (game2.word.toUpperCase() == answer.toUpperCase()) {
+//
+//            Server.getGame(gameId, function(game) {
+//
+//                // change the game state
+//                game.role = "r";
+//
+//                callback(true);
+//            });
+//        } else {
+//            callback(false);
+//        }
+//    });
+//};
 
 /**
  * Creates a new game 
@@ -276,17 +276,17 @@ Server.validateGuess = function(gameId, answer, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.createNewGame = function(myID, otherID, callback) {
-    game = {
-        "_id": Database.activeGames.data.length,
-        "uid0": myID,
-        "uid1": otherID,
-        "next": 0,
-        "role": "r"
-    };
-    Database.activeGames.data.push(game);
-    callback(game);
-};
+//Server.createNewGame = function(myID, otherID, callback) {
+//    game = {
+//        "_id": Database.activeGames.data.length,
+//        "uid0": myID,
+//        "uid1": otherID,
+//        "next": 0,
+//        "role": "r"
+//    };
+//    Database.activeGames.data.push(game);
+//    callback(game);
+//};
 
 //TODO: Break down to number of create game style
 
@@ -370,13 +370,13 @@ Server.createNewGame = function(myID, otherID, callback) {
  * @param {type} callback
  * @returns {undefined}
  */
-Server.makeMoveRiddler = function(currentGameID, callback) {
-    Server.getGame(currentGameID, function(game) {
-        game.next = 1 - game.next;
-        game.role = "g";
-        callback();
-    });
-};
+//Server.makeMoveRiddler = function(currentGameID, callback) {
+//    Server.getGame(currentGameID, function(game) {
+//        game.next = 1 - game.next;
+//        game.role = "g";
+//        callback();
+//    });
+//};
 
 
 //*****************************************************************************
@@ -642,12 +642,14 @@ function validateGuess() {
 
     // validate the guess with info from the server
 //    Server.validateGuess(gameId, answer, function(response) {
-    ajaxcall("POST", "/turn/g/" + gameId, function(response){
+    ajaxcall("POST", "/turn/g/" + gameId, function(res){
         
-        if (response === true) {
+        response = JSON.parse(res.responseText);
+        
+        if (response == true) {
             alert("Excellent! You're right! Now it's your time to ShowIt!");
             window.location = "#pageMainMenu?reload";
-        } else { // response === false
+        } else { // response == false
             alert("Wrong answer. Try again!");
             // TODO: update tries left
         }
@@ -676,11 +678,11 @@ function createNewGame(opponentID) {
  * @param {type} currentGameID
  * @returns {undefined}
  */
-function makeMoveRiddler(currentGameID) {
-    Server.makeMoveRiddler(currentGameID, function() {
-        window.location = '#pageMainMenu?reload';
-    });
-}
+//function makeMoveRiddler(currentGameID) {
+//    Server.makeMoveRiddler(currentGameID, function() {
+////        window.location = '#pageMainMenu?reload';
+//    });
+//}
 
 /**
  * Checks if a game between this user and the given opponenets id is an active game
@@ -732,6 +734,7 @@ function updateChosenWords(chosenWords) {
  * @returns {undefined}
  */
 function gotoPagePrePictureScreen(chosenWord) {
+    $('#sendPicture').reset(); // resets the uplaod form
     $('#picturePreview').attr('src', 'img/pre_upload.jpg');
     label = document.getElementById('chosenWord');
     label.innerHTML = chosenWord;
@@ -781,7 +784,8 @@ function fileUpload() {
         }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
         console.log("result = " + result);
         console.log("name = " + fileName);
-        makeMoveRiddler(currentGameID);
+//        makeMoveRiddler(currentGameID);
+        window.location = "#pageMainMenu?reload";
     };
 
 
