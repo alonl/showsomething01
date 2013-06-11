@@ -109,7 +109,6 @@ app.post('/games', function(req, res) {
 
 });
 
-
 // gets a game from DB with the given id
 app.get('/game/:gameid', function(req, res) {
 	
@@ -319,6 +318,20 @@ app.post('/turn/g/:gameid', function(req, res) {
 		
 	});
 
+});
+
+// user gives up on trying to guess the game
+app.get('/turn/g/giveup/:gameid', function(req, res) {
+
+	gameid = req.params.gameid;
+	
+	// changes the game state to riddler (same player
+	someDb.updateGameState(gameid, 'r', false, function (error, result) {
+						
+		res.send(result);
+							
+	});
+		
 });
 
 // gets turn information guessrr from the DB

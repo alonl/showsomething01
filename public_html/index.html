@@ -172,7 +172,15 @@
                     <input type="text" name="riddleAnswer" id="riddleAnswer" class="centered-text" data-mini="true" data-insert="true" />
                     <button type="submit" name="submit" onclick="validateGuess();">Submit</button>
                 </form>
-                <div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>
+                
+                <div data-role="controlgroup" data-type="horizontal">
+                    
+                     <a href="javascript: giveup();" data-role="button" data-min="true">Give up!</a>  
+                     <a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a>
+                     
+    
+                </div>
+                
             </footer>
 
         </section><!-- /page Guess -->

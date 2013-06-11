@@ -320,6 +320,7 @@ ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback)
 	  
         games_collection.update({_id: ObjectID(gameid)}, {$set: {'role': newRole}});
 		
+		// if next player changes (riddler finished his move)
 		if (next == true) {
 			games_collection.find({_id: ObjectID(gameid)}).toArray(function(error, result) {
 				if(error) callback(error)
