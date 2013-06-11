@@ -204,7 +204,7 @@ ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
 };
 
 // saves turn information guesser in the database
-ShowsomeDb.prototype.saveTurnInfoG = function(turn, image, callback) {
+ShowsomeDb.prototype.saveTurnInfoG = function(turn, callback) {
     this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
       if( error ) callback(error)
       else {
@@ -304,7 +304,7 @@ ShowsomeDb.prototype.deleteTurnInfoR = function (gameid, callback) {
       if( error ) {callback(false);}
       else {
         turnInfoR_collection.remove({'gameID': gameid});
-		callbac(true);
+		callback(true);
       }
     });
 };

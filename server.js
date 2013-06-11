@@ -376,7 +376,7 @@ app.post('/turn/r', function (req, res) {
 		showsomeDb.deleteTurnInfoG(turn.gameID, function() {});
 
 		// saves the new turnInfoG
-		showsomeDb.saveTurnInfoG(turn, image, function (error, result) {
+		showsomeDb.saveTurnInfoG(turn, function (error, result) {
 		
 			if (error) {
 				res.json(error, 400);
@@ -398,7 +398,7 @@ app.post('/turn/r', function (req, res) {
 				//res.send(turn._id);
 				res.send("updated");
 			} 
-			
+				
 		});
 		
 	});
