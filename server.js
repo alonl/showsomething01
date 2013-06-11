@@ -348,10 +348,10 @@ app.get('/turn/g/:gameid/photo' , function (req, res) {
 		} else {
 			
 			//return only the image of this game (ommits the object id)
-			copy = {
-				"photo": result.photo
-			}
-			res.send(copy);
+		//	copy = {
+		//		"photo": result.photo
+		//	}
+			res.send(result.photo);
 		}
 	});
 	

@@ -584,7 +584,7 @@ function yourTurnGuesser(game) {
 //        console.log(URL.createObjectURL(blob));
 
         var image = document.createElement('img');
-        image.src = response.photo;
+        image.src = "turn/g/" + game._id + "/photo";
         $(image).addClass('fit-width');
         document.getElementById('riddleImageDiv').innerHTML = "";
         document.getElementById('riddleImageDiv').appendChild(image);
@@ -734,7 +734,7 @@ function updateChosenWords(chosenWords) {
  * @returns {undefined}
  */
 function gotoPagePrePictureScreen(chosenWord) {
-    $('#sendPicture').reset(); // resets the uplaod form
+    document.getElementById("sendPicture").reset(); // resets the uplaod form
     $('#picturePreview').attr('src', 'img/pre_upload.jpg');
     label = document.getElementById('chosenWord');
     label.innerHTML = chosenWord;
