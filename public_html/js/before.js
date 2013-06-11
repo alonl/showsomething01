@@ -126,25 +126,25 @@ Server = {};
  * @param {type} callback
  * @returns {undefined}
  */
-Server.registerUser = function(uid) {
-
-    // check if user is already registered
-    if ($.inArray(uid, Database.registeredUsers) > -1) {
-        return;
-    }
-    // else
-
-    // add the user to the registered users database
-    Database.registeredUsers.push(uid);
-};
+//Server.registerUser = function(uid) {
+//
+//    // check if user is already registered
+//    if ($.inArray(uid, Database.registeredUsers) > -1) {
+//        return;
+//    }
+//    // else
+//
+//    // add the user to the registered users database
+//    Database.registeredUsers.push(uid);
+//};
 
 /**
  * Gets the current registered users
  * @returns {@exp;Database@pro;registeredUsers}
  */
-Server.getRegisteredUsers = function() {
-    return Database.registeredUsers;
-};
+//Server.getRegisteredUsers = function() {
+//    return Database.registeredUsers;
+//};
 
 // TODO: delete!
 /**
@@ -563,25 +563,53 @@ function yourTurnGuesser(game) {
 
     // TODO: here111
 
-    ajaxcall("GET", "turn/g/" + game._id, function(response) {
+    ajaxcall("GET", "turn/g/" + game._id, function(res) {
 //        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photo + '">');
 
+        response = JSON.parse(res.responseText);
+//
+//        var base64Image = response.photo.split("data:image/bmp;base64,")[1];
+//        var binaryImg = atob(base64Image);
+//        var length = binaryImg.length;
+//        var ab = new ArrayBuffer(length);
+//        var ua = new Uint8Array(ab);
+//        for (var i = 0; i < length; i++) {
+//            ua[i] = binaryImg.charCodeAt(i);
+//        }
+//
+//        var blob = new Blob([ab], {
+//            type: "image/bmp"
+//        });
+//        
+//        console.log(URL.createObjectURL(blob));
 
-        var reader = new FileReader();
-        reader.onload = function(event) {
-            var dataUri = event.target.result,
-                    img = document.createElement("img");
+        var image = document.createElement('img');
+        image.src = response.photo;
+        $(image).addClass('fit-width');
+        document.getElementById('riddleImageDiv').innerHTML = "";
+        document.getElementById('riddleImageDiv').appendChild(image);
 
-            img.src = dataUri;
-            document.body.appendChild(img); // TODO: delete?
-            $("#riddleImageDiv").append(img);
-        };
 
-        reader.onerror = function(event) {
-            console.error("File could not be read! Code " + event.target.error.code);
-        };
-
-        reader.readAsDataURL(response.photo);
+//        var reader = new FileReader();
+//        reader.onload = function(event) {
+//            var dataUri = event.target.result,
+//                    img = document.createElement("img");
+//
+//            console.log('dataUri = ' + dataUri);
+//            console.log('img = ' + img);
+//
+//            img.src = dataUri;
+//            console.log('img.src = ' + img.src);
+//            
+//            document.body.appendChild(img); // TODO: delete?
+//            $("#riddleImageDiv").append(img);
+//        };
+//
+//        reader.onerror = function(event) {
+//            console.error("File could not be read! Code " + event.target.error.code);
+//        };
+//
+//        reader.readAsDataURL(response.photo);
 
 
 
@@ -613,7 +641,9 @@ function validateGuess() {
     answer = document.forms["riddle-answer"]["riddleAnswer"].value;
 
     // validate the guess with info from the server
-    Server.validateGuess(gameId, answer, function(response) {
+//    Server.validateGuess(gameId, answer, function(response) {
+    ajaxcall("POST", "/turn/g/" + gameId, function(response){
+        
         if (response === true) {
             alert("Excellent! You're right! Now it's your time to ShowIt!");
             window.location = "#pageMainMenu?reload";
@@ -621,7 +651,8 @@ function validateGuess() {
             alert("Wrong answer. Try again!");
             // TODO: update tries left
         }
-    });
+        
+    }, answer);
 
     // You must return false to prevent the default form behavior
     return false;
@@ -734,6 +765,12 @@ function fileUpload() {
     alert("The picture will be sent to your friend! (Not implemented yet)");
 
     file = document.getElementById('fileToUpload').files[0];
+    
+    if (file.size > 1049000) {
+        alert("The maximum image size is 1 MB. Please upload a smaller file.");
+        return;
+    }
+    
     reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function(event) {
