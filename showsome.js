@@ -289,6 +289,29 @@ ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
     });
 };
 
+// updates  and returns number of tries left
+ShowsomeDb.prototype.updateTriesLeft = function(gameid, callback) {
+    this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
+      if( error ) callback(false)
+      else {
+		
+		turnInfoG_collection.find( {'gameID': gameid} ).toArray(function(error, result) {
+          if(error) {callback(error);}
+          else {
+			
+			// number of tries left after this wrong guess
+			tries = result[0].triesLeft - 1;
+			console.log(tries);
+			turnInfoG_collection.update({'gameID': gameid}, {$set: {'triesLeft': tries}});
+			callback(null, tries);
+		  
+		  }
+        }); 
+ 
+      }
+    });
+};
+
 // updates the game state to "state"
 ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback) {
     this.getCollection(function(error, games_collection) {
@@ -297,6 +320,7 @@ ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback)
 	  
         games_collection.update({_id: ObjectID(gameid)}, {$set: {'role': newRole}});
 		
+		// if next player changes (riddler finished his move)
 		if (next == true) {
 			games_collection.find({_id: ObjectID(gameid)}).toArray(function(error, result) {
 				if(error) callback(error)

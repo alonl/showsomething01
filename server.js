@@ -44,7 +44,7 @@ app.get('/games' , function(req, res) {
 	});
 });
 
-//TODO: none!
+//get all active games for a given user
 app.get('/games/:uid', function(req, res) {
 	
 	// gets the id
@@ -108,7 +108,6 @@ app.post('/games', function(req, res) {
 	
 
 });
-
 
 // gets a game from DB with the given id
 app.get('/game/:gameid', function(req, res) {
@@ -298,7 +297,19 @@ app.post('/turn/g/:gameid', function(req, res) {
 				// wrong guess, return false
 				else {
 					
-					res.send('false');
+					// updates the number of tries left
+					showsomeDb.updateTriesLeft(gameid, function(error, result) {
+						
+						if (error) {
+							res.send("error while updating number of tries in game: " + gameid);
+						} else {
+							
+							// sends back number of tries left
+							res.send(String(result));
+								
+						}
+						
+					});
 					
 				}
 			}
@@ -307,6 +318,20 @@ app.post('/turn/g/:gameid', function(req, res) {
 		
 	});
 
+});
+
+// user gives up on trying to guess the game
+app.get('/turn/g/giveup/:gameid', function(req, res) {
+
+	gameid = req.params.gameid;
+	
+	// changes the game state to riddler (same player
+	someDb.updateGameState(gameid, 'r', false, function (error, result) {
+						
+		res.send(result);
+							
+	});
+		
 });
 
 // gets turn information guessrr from the DB
@@ -477,13 +502,13 @@ showsomeDb.saveGames([
             "uid1": "1127758094",
             "next": "1",
             "role": "r"
-        },
-        {
+        }
+    /*    {
             "uid0": "761779163",
             "uid1": "100002058341130",
             "next": "1",
             "role": "g"
-        }
+        } */
     ], function(callback) {});
 	
  /*showsomeDb.saveTurnInfoG([
@@ -738,24 +763,6 @@ showsomeDb.saveWords([
 	console.log("SAVED");
 	res.send("saved");
 });
-
-
-
-
-
-// app.post('/games' ,showsome.putActiveGame); // id is given by the sever and returned to client
-// app.get('/users' ,showsome.getUsers);
-// app.post('/users' ,showsome.putUser);
-// app.get('/game/:id' ,showsome.getGame);
-// app.post('/game' ,showsome.putGame);
-// app.delete('/game/:id' ,showsome.deleteGame);
-
-
-//app.get('/students',student.findAll);
-//app.get('/students/:id', student.findById);
-//app.post('/students', student.addStudent);
-//app.put('/students/:id', student.updateStudent);
-//app.delete('/students/:id', student.deleteStudent);
 
 app.listen(3000);
 

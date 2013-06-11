@@ -615,7 +615,7 @@ function validateGuess() {
         response = JSON.parse(res.responseText);
 
         if (response == true) {
-            alert("Excellent! You're right! Now it's your time to ShowIt!");
+            alert("Excellent! You're right! Now it's your time to ShowSomething!");
             window.location = "#pageMainMenu?reload";
         } else { // response == false
             alert("Wrong answer. Try again!");
@@ -626,6 +626,22 @@ function validateGuess() {
 
     // You must return false to prevent the default form behavior
     return false;
+}
+
+// let the server know that the user has given up
+function giveUp() {
+    
+        ajaxcall("get", "/turn/g/giveup/" + gameId, function(res) {
+
+        response = JSON.parse(res.responseText);
+
+        if (response == true) {
+            alert("Nice Try! more luck next time! it's your turn to ShowSomething!");
+            window.location = "#pageMainMenu?reload";
+        }
+
+    });
+  
 }
 
 /**
