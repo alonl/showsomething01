@@ -561,57 +561,14 @@ function yourTurnGuesser(game) {
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
 
-    // TODO: here111
+    var image = document.createElement('img');
+    image.src = "img/loading.gif";
+    $(image).addClass('fit-width');
+    document.getElementById('riddleImageDiv').innerHTML = "";
+    document.getElementById('riddleImageDiv').appendChild(image);
 
     ajaxcall("GET", "turn/g/" + game._id, function(res) {
-//        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photo + '">');
-
         response = JSON.parse(res.responseText);
-//
-//        var base64Image = response.photo.split("data:image/bmp;base64,")[1];
-//        var binaryImg = atob(base64Image);
-//        var length = binaryImg.length;
-//        var ab = new ArrayBuffer(length);
-//        var ua = new Uint8Array(ab);
-//        for (var i = 0; i < length; i++) {
-//            ua[i] = binaryImg.charCodeAt(i);
-//        }
-//
-//        var blob = new Blob([ab], {
-//            type: "image/bmp"
-//        });
-//        
-//        console.log(URL.createObjectURL(blob));
-
-        var image = document.createElement('img');
-        image.src = "turn/g/" + game._id + "/photo";
-        $(image).addClass('fit-width');
-        document.getElementById('riddleImageDiv').innerHTML = "";
-        document.getElementById('riddleImageDiv').appendChild(image);
-
-
-//        var reader = new FileReader();
-//        reader.onload = function(event) {
-//            var dataUri = event.target.result,
-//                    img = document.createElement("img");
-//
-//            console.log('dataUri = ' + dataUri);
-//            console.log('img = ' + img);
-//
-//            img.src = dataUri;
-//            console.log('img.src = ' + img.src);
-//            
-//            document.body.appendChild(img); // TODO: delete?
-//            $("#riddleImageDiv").append(img);
-//        };
-//
-//        reader.onerror = function(event) {
-//            console.error("File could not be read! Code " + event.target.error.code);
-//        };
-//
-//        reader.readAsDataURL(response.photo);
-
-
 
         $("#riddleAnswer").attr('maxlength', response.word);
         $("#riddleAnswer").attr('placeholder', 'word length is: ' + response.word);
@@ -619,6 +576,17 @@ function yourTurnGuesser(game) {
 
         window.location = "#pageGuess";
     });
+
+    $(document).bind('pagechange', function() {
+        ajaxcall("GET", "turn/g/" + game._id + "/photo", function(res2) {
+            var image = document.createElement('img');
+            image.src = res2.responseText;
+            $(image).addClass('fit-width');
+            document.getElementById('riddleImageDiv').innerHTML = "";
+            document.getElementById('riddleImageDiv').appendChild(image);
+        });
+    });
+
 
 //    Server.getTurnInformationGLength(game._id, function(response) {
 //        $("#riddleImageDiv").html('<img class="fit-width" src="' + response.photoUrl + '">');
@@ -642,10 +610,10 @@ function validateGuess() {
 
     // validate the guess with info from the server
 //    Server.validateGuess(gameId, answer, function(response) {
-    ajaxcall("POST", "/turn/g/" + gameId, function(res){
-        
+    ajaxcall("POST", "/turn/g/" + gameId, function(res) {
+
         response = JSON.parse(res.responseText);
-        
+
         if (response == true) {
             alert("Excellent! You're right! Now it's your time to ShowIt!");
             window.location = "#pageMainMenu?reload";
@@ -653,7 +621,7 @@ function validateGuess() {
             alert("Wrong answer. Try again!");
             // TODO: update tries left
         }
-        
+
     }, answer);
 
     // You must return false to prevent the default form behavior
@@ -768,12 +736,12 @@ function fileUpload() {
     alert("The picture will be sent to your friend! (Not implemented yet)");
 
     file = document.getElementById('fileToUpload').files[0];
-    
+
     if (file.size > 1049000) {
         alert("The maximum image size is 1 MB. Please upload a smaller file.");
         return;
     }
-    
+
     reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function(event) {
@@ -828,7 +796,6 @@ function reloadPage(pageSelector, callback) {
 
     // bulids similar parts for both pages
     $("body").append('<section data-role="page" id="' + pageID + '" data-theme="a"></section>');
-    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><img src="img/logo_trans.png" alt="ShowSomething"></h1></header>');
     $(pageSelector).append('<div data-role="content" id="' + pageID + 'Content"></div>');
     $(pageSelector).append('<footer data-role="footer" id="' + pageID + 'Footer" data-position="fixed"></footer>');
 
@@ -848,6 +815,7 @@ function reloadPage(pageSelector, callback) {
  * @returns {undefined}
  */
 function reloadPageMainMenu(pageSelector, callback) {
+    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
     $(pageSelector + 'Footer').append('<h3>See If You Know What You See!</h3>');
 
     // displays a welcome message to the user
@@ -887,7 +855,7 @@ function reloadPageMainMenu(pageSelector, callback) {
                     actionMessage = "Your Move!";
                     link = 'href="javascript: yourTurnGuesser(userActiveGames[' + i + ']);"';
                 }
-                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a></li>';
+                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a><a href=""></a></li>';
                 $("#testlist").append(gameItem);
             }
 
