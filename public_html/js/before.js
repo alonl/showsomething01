@@ -617,9 +617,21 @@ function validateGuess() {
         if (response == true) {
             alert("Excellent! You're right! Now it's your time to ShowSomething!");
             window.location = "#pageMainMenu?reload";
-        } else { // response == false
-            alert("Wrong answer. Try again!");
-            // TODO: update tries left
+        } else { // response == number of tries left
+            
+            // more tries available
+            if (response != 0) {
+                alert("Oops! Wrong answer. you have " + response + " tries left! Do try again!");
+            }
+            
+            // no more tries left
+            else {
+                
+                // ends this game and moves to next state
+                giveup();
+                
+            }
+ 
         }
 
     }, answer);
