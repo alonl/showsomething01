@@ -99,8 +99,12 @@ function TurnInfoGCopy(turnInfoG) {
 // Server functions
 //*****************************************************************************
 
-var ajaxcall = function(method, url, onready, body) {
-
+var ajaxcall = function(method, url, onready, body, showReload) {
+    
+    if (showReload == null) {
+        $.mobile.showPageLoadingMsg("", "Get ready to ShowSomething!");
+    }
+    
     var request = false;
     request = new XMLHttpRequest();
 
@@ -442,7 +446,7 @@ function facebookLoggedIn() {
 
     FB.api('/me', function(response) {
         ajaxcall("POST", "users/" + response.id, function() {
-        }, "");
+        }, "", true);
         fullName = response.name;
         window.location = "#pageMainMenu?reload";
     });
@@ -476,7 +480,8 @@ function setNameInHtml(opponentID) {
 function yourTurnRiddler(game) {
 
     currentGameID = game._id;
-
+    
+    
     ajaxcall("GET", "turn/r/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);
@@ -530,9 +535,11 @@ function transferChosenWord() {
     // finds out which word was checked
     chosenWord = $('#wordsPresented :checked').val();
 //    Server.saveChosenWord(currentGameID, chosenWord);
+    
     ajaxcall("PUT", "turn/r/" + currentGameID, function() {
+        gotoPagePrePictureScreen(chosenWord);
     }, chosenWord);
-    gotoPagePrePictureScreen(chosenWord);
+    
 }
 
 /**
@@ -541,6 +548,8 @@ function transferChosenWord() {
  * @returns {undefined}
  */
 function generateWords(diff) {
+    
+    
     ajaxcall("GET", "game/generate/" + currentGameID + "/" + diff, function(response) {
         words = JSON.parse(response.responseText);
         updateChosenWords(words);
@@ -561,12 +570,14 @@ function yourTurnGuesser(game) {
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
 
+    // TODO: keep it?
     var image = document.createElement('img');
     image.src = "img/loading.gif";
     $(image).addClass('fit-width');
     document.getElementById('riddleImageDiv').innerHTML = "";
     document.getElementById('riddleImageDiv').appendChild(image);
 
+    
     ajaxcall("GET", "turn/g/" + game._id, function(res) {
         response = JSON.parse(res.responseText);
 
@@ -578,13 +589,14 @@ function yourTurnGuesser(game) {
     });
 
     $(document).bind('pagechange', function() {
+         // TODO: keep it?
         ajaxcall("GET", "turn/g/" + game._id + "/photo", function(res2) {
             var image = document.createElement('img');
             image.src = res2.responseText;
             $(image).addClass('fit-width');
             document.getElementById('riddleImageDiv').innerHTML = "";
             document.getElementById('riddleImageDiv').appendChild(image);
-        });
+        }, "", true);
     });
 
 
@@ -609,7 +621,7 @@ function validateGuess() {
     answer = document.forms["riddle-answer"]["riddleAnswer"].value;
 
     // validate the guess with info from the server
-//    Server.validateGuess(gameId, answer, function(response) {
+    
     ajaxcall("POST", "/turn/g/" + gameId, function(res) {
 
         response = res.responseText;
@@ -655,6 +667,7 @@ function validateGuess() {
 // let the server know that the user has given up
 function giveup() {
 
+    
     ajaxcall("get", "/turn/g/giveup/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);
@@ -678,7 +691,7 @@ function createNewGame(opponentID) {
         game = JSON.parse(response.responseText);
         currentGameID = game._id;
         yourTurnRiddler(game);
-    }, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}');
+    }, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}', true);
 }
 
 /**
@@ -707,9 +720,10 @@ function isInActiveGames(userID) {
 }
 
 function deleteGame(gameID) {
+    
     ajaxcall("DELETE", "/game/" + gameID, function() {
         alert("The game has been deleted.");
-        $('#mainLogo').click();
+        document.getElementById('mainLogo').click();  // TODO: fix
     });
 }
 
@@ -779,15 +793,16 @@ function filePreview() {
  * @returns {undefined}
  */
 function fileUpload() {
-    // TODO: upload file to the server
-    alert("The picture will be sent to your friend!");
-
     file = document.getElementById('fileToUpload').files[0];
 
     if (file.size > 1049000) {
         alert("The maximum image size is 1 MB. Please upload a smaller file. (Tip: Try to zoom in while taking the picture for reducing it's size...)");
         return;
     }
+    
+    alert("The picture is now being sent to your friend! Please wait a moment.");
+    
+    $.mobile.showPageLoadingMsg("", "Get ready to ShowSomething!");
 
     reader = new FileReader();
     reader.readAsDataURL(file);
@@ -798,7 +813,8 @@ function fileUpload() {
         ajaxcall("POST", "/turn/r", function() {
             console.log("result = " + result);
             console.log("name = " + fileName);
-        window.location = "#pageMainMenu?reload";
+            $.mobile.changePage("#pageMainMenu?reload"); // TODO: fix all like this
+//            window.location = "#pageMainMenu?reload";
         }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
     };
 
@@ -876,6 +892,7 @@ function reloadPageMainMenu(pageSelector, callback) {
 
     userActiveGames = [];
 
+    
     ajaxcall("GET", "games/" + uid, function(response) {
 
         userActiveGames = JSON.parse(response.responseText);
@@ -947,6 +964,7 @@ function reloadPageNewGame(pageSelector, callback) {
     $page = $(pageSelector);
     $content = $page.children(":jqmData(role=content)");
 
+    
     ajaxcall("GET", "users", function(response) {
 
         registeredUsersDB = JSON.parse(response.responseText);
