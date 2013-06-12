@@ -615,23 +615,35 @@ function validateGuess() {
         response = res.responseText;
 
         if (response == "correct") {
-            alert("Excellent! You're right! Now it's your time to ShowSomething!");
-            window.location = "#pageMainMenu?reload";
+            $(this).simpledialog({
+                'mode': 'bool',
+                'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
+                'useModal': true,
+                'buttons': {
+                    'continue': {
+                        click: function() {
+                            window.location = "#pageMainMenu?reload";
+                        }
+                    }
+                }
+            });
+            //alert("Excellent! You're right! Now it's your time to ShowSomething!");
+           // window.location = "#pageMainMenu?reload";
         } else { // response == number of tries left
-            
+
             // more tries available
             if (response != 0) {
                 alert("Oops! Wrong answer. you have " + response + " tries left! Do try again!");
             }
-            
+
             // no more tries left
             else {
-                
+
                 // ends this game and moves to next state
                 giveup();
-                
+
             }
- 
+
         }
 
     }, answer);
@@ -642,8 +654,8 @@ function validateGuess() {
 
 // let the server know that the user has given up
 function giveup() {
-    
-        ajaxcall("get", "/turn/g/giveup/" + currentGameID, function(res) {
+
+    ajaxcall("get", "/turn/g/giveup/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);
 
@@ -653,7 +665,7 @@ function giveup() {
         }
 
     });
-  
+
 }
 
 /**
@@ -695,7 +707,7 @@ function isInActiveGames(userID) {
 }
 
 function deleteGame(gameID) {
-    ajaxcall("DELETE", "/game/" + gameID, function(){
+    ajaxcall("DELETE", "/game/" + gameID, function() {
         alert("The game has been deleted.");
     });
 }
