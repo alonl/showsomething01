@@ -612,9 +612,9 @@ function validateGuess() {
 //    Server.validateGuess(gameId, answer, function(response) {
     ajaxcall("POST", "/turn/g/" + gameId, function(res) {
 
-        response = JSON.parse(res.responseText);
+        response = res.responseText;
 
-        if (response == "currect") {
+        if (response == "correct") {
             alert("Excellent! You're right! Now it's your time to ShowSomething!");
             window.location = "#pageMainMenu?reload";
         } else { // response == number of tries left
