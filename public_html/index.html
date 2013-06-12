@@ -130,8 +130,7 @@
                 <div class="centered-text"><h3>You are now describing: <span id='chosenWord'></span></h3></div>
                 <div class='centered-normal fit-image'>
                     <a href="javascript: filePreview();">
-                        <img class='fit-width' id='picturePreview' src='img/pre_upload.jpg' alt='Click here to upload your picture!'>
-                        Upload Image.
+                        <img class='fit-width' id='picturePreview' src='img/pre_upload.png' alt='Click here to upload your picture!'>
                     </a>
                 </div>
 
@@ -139,7 +138,7 @@
 
             <footer data-role="footer" data-position="fixed">
                 <form id="sendPicture" enctype="multipart/form-data" method="post" action="/">
-                    <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);"/>
+                    <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);" style="width: 0px; height: 0px;">
                     <!--TODO: check maximum file size-->
                     <input type="button" onclick="fileUpload();" value="ShowIt!" />
                 </form>

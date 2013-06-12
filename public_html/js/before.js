@@ -737,7 +737,7 @@ function updateChosenWords(chosenWords) {
  */
 function gotoPagePrePictureScreen(chosenWord) {
     document.getElementById("sendPicture").reset(); // resets the uplaod form
-    $('#picturePreview').attr('src', 'img/pre_upload.jpg');
+    $('#picturePreview').attr('src', 'img/pre_upload.png');
     label = document.getElementById('chosenWord');
     label.innerHTML = chosenWord;
     window.location = '#pagePrePicture';
@@ -767,7 +767,7 @@ function filePreview() {
  */
 function fileUpload() {
     // TODO: upload file to the server
-    alert("The picture will be sent to your friend! (Not implemented yet)");
+    alert("The picture will be sent to your friend!");
 
     file = document.getElementById('fileToUpload').files[0];
 
