@@ -54,10 +54,9 @@ app.get('/games/:uid', function(req, res) {
 		if (error) {
 			console.log(error);
 		} else {
-			console.log(result);
 			var userActiveGames = [];
 			for (i = 0; i < result.length; i++) {
-				console.log(result[i]);
+				
 				if (result[i].uid0 == uid) {
 					game = new Game(result[i]._id, result[i].uid1, 1 - result[i].next, result[i].role);
 				} else if (result[i].uid1 == uid) {
@@ -114,7 +113,6 @@ app.get('/game/:gameid', function(req, res) {
 	
 	// the given id for the requested game
 	gameID = req.params.gameid;
-	console.log(gameID);
 	
 	showsomeDb.findOne(gameID, function(error, result) {
 		if (error) {
@@ -144,23 +142,22 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 		if (error) {
 			console.log("error getting words");
 		} else {
-		
+			
 			for (i = 0; i < 5; i++) {
 
 				randomNumber = Math.floor(Math.random() * words.length);
-	
 				if (i > 0) {
-
+					
 					// makes sure we dont choose the same word twice
 					while (in_array(randomNumber, usedArray) != -1) {
 						randomNumber = Math.floor(Math.random() * words.length);
+						
 					}
 
 				}
 
 				// choses a word
 				chosenWords[i] = words[randomNumber].word;
-				console.log(chosenWords[i]);
 
 				// prevent duplications	
 				usedArray[i] = randomNumber;
@@ -286,10 +283,6 @@ app.post('/turn/g/:gameid', function(req, res) {
 					showsomeDb.updateGameState(gameid, 'r', false, function (error, result) {
 						
 						res.send("correct");
-						
-						//getGame(gameid, function (result) {
-						//	console.log(result);
-						//});
 					});
 					
 				}
@@ -487,7 +480,8 @@ app.delete('/game/:gameid', function (req, res) {
 
 app.get('/momo', function(req, res) {
 
-showsomeDb.deleteGame('all' ,function(callback) {}); // works fine
+showsomeDb.deleteGame('all' ,function(callback) {});
+showsomeDb.deleteWord('all', function(callback) {}); //delets all words
 	
 showsomeDb.saveGames([
         {
