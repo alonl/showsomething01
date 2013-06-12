@@ -326,7 +326,7 @@ app.get('/turn/g/giveup/:gameid', function(req, res) {
 	gameid = req.params.gameid;
 	
 	// changes the game state to riddler (same player
-	someDb.updateGameState(gameid, 'r', false, function (error, result) {
+	showsomeDb.updateGameState(gameid, 'r', false, function (error, result) {
 						
 		res.send(result);
 							
