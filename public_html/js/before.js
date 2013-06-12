@@ -722,13 +722,17 @@ function isInActiveGames(userID) {
 function deleteGame(gameID) {
     
     ajaxcall("DELETE", "/game/" + gameID, function() {
-//        document.getElementById('mainLogo').click();  // TODO: fix
-//        $.mobile.changePage("#pageMainMenu?reload");
+
+        // removes the game from the list view
         $('#' + gameID +'li').remove();
         $('#testlist').trigger('create');
+        
+        // removes the game from the active games list
+        findAndRemove(userActiveGames, '_id', gameID);
+        
         alert("The game has been deleted.");
         
-    });
+    }, "", true);
 }
 
 //*****************************************************************************
@@ -844,6 +848,15 @@ var sort_by = function(field, reverse, primer) {
     };
 };
 
+function findAndRemove(array, property, value) {
+   $.each(array, function(index, result) {
+      if(result[property] == value) {
+          //Remove from array
+          array.splice(index, 1);
+      }    
+   });
+}
+
 
 //*****************************************************************************
 // Dynamic pages loading
@@ -881,7 +894,7 @@ function reloadPage(pageSelector, callback) {
  * @returns {undefined}
  */
 function reloadPageMainMenu(pageSelector, callback) {
-    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a id="mainLogo" href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
+    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a id="mainLogo" href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1><a href="index.html" data-icon="gear" class="ui-btn-right"></a></header>');
     $(pageSelector + 'Footer').append('<h3>See If You Know What You See!</h3>');
 
     // displays a welcome message to the user
@@ -903,6 +916,10 @@ function reloadPageMainMenu(pageSelector, callback) {
         console.log("Got active games: " + JSON.stringify(userActiveGames));
         if (userActiveGames != null)
         {
+            if (userActiveGames.length == 0) {
+                $(pageSelector + 'Content').append("<h3>You have no active games. Isn't it a time to create a new one?</h3>")
+            }
+            
             for (i = 0; i < userActiveGames.length; ++i) {
                 gameId = userActiveGames[i]._id;
                 opponentID = userActiveGames[i].opponentID;
