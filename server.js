@@ -478,99 +478,8 @@ app.delete('/game/:gameid', function (req, res) {
 	
 });
 
-app.get('/momo', function(req, res) {
-
-showsomeDb.deleteGame('all' ,function(callback) {});
-showsomeDb.deleteWord('all', function(callback) {}); //delets all words
-	
-showsomeDb.saveGames([
-        {
-            // a game object
-            "uid0": "100002058341130",
-            "uid1": "100001053996829",
-            "next": "0",
-            "role": "r"
-        },
-        {
-            "uid0": "100002058341130",
-            "uid1": "1127758094",
-            "next": "1",
-            "role": "r"
-        }
-    /*    {
-            "uid0": "761779163",
-            "uid1": "100002058341130",
-            "next": "1",
-            "role": "g"
-        } */
-    ], function(callback) {});
-	
- /*showsomeDb.saveTurnInfoG([
-		{
-            "gameID": "51ae579c2b7152cc24000003", // game id
-            "word": "waterfall", // words for guesser to desctibe
-            "photo": "img/waterfall2.jpg", // the photo of the word to describe
-            "triesLeft": 5 //number of tries left (will be used in next version)
-        }
-    ], function(callback) {}); */
-	
-	
-	
-	
-showsomeDb.saveUsers([
-
-        {
-            // a user object
-            "uid": "761779163"
-        },
-        {
-            // a user object
-            "uid": "759352895"
-        },
-		{
-            // a user object
-            "uid": "583844288"
-        },
-		{
-            // a user object
-            "uid": "759352895"
-        },
-		{
-            // a user object
-            "uid": "100001053996829"
-        },
-		{
-            // a user object
-            "uid": "1127758094"
-        },
-		{
-            // a user object
-            "uid": "589522209"
-        },
-		{
-            // a user object
-            "uid": "604016348"
-        },
-		{
-            // a user object
-            "uid": "603071564"
-        },
-		{
-            // a user object
-            "uid": "617923676"
-        },
-		{
-            // a user object
-            "uid": "833304196"
-        },
-		{
-            // a user object
-            "uid": "100001388995300"
-        }
-    ], function(callback) {});
-	
-
-showsomeDb.saveWords([
+app.get('/yugi', function(req, res) {
+	showsomeDb.saveWords([
         {
             // a word object
             "difficulty": "1",
@@ -754,6 +663,101 @@ showsomeDb.saveWords([
             "word": "behavior"
         }
     ], function(callback) {});
+});
+
+app.get('/momo', function(req, res) {
+
+showsomeDb.deleteGame('all' ,function(callback) {});
+//showsomeDb.deleteWord('all', function(callback) {}); //delets all words
+	
+showsomeDb.saveGames([
+        {
+            // a game object
+            "uid0": "100002058341130",
+            "uid1": "100001053996829",
+            "next": "0",
+            "role": "r"
+        },
+        {
+            "uid0": "100002058341130",
+            "uid1": "1127758094",
+            "next": "1",
+            "role": "r"
+        }
+    /*    {
+            "uid0": "761779163",
+            "uid1": "100002058341130",
+            "next": "1",
+            "role": "g"
+        } */
+    ], function(callback) {});
+	
+ /*showsomeDb.saveTurnInfoG([
+		{
+            "gameID": "51ae579c2b7152cc24000003", // game id
+            "word": "waterfall", // words for guesser to desctibe
+            "photo": "img/waterfall2.jpg", // the photo of the word to describe
+            "triesLeft": 5 //number of tries left (will be used in next version)
+        }
+    ], function(callback) {}); */
+	
+	
+	
+	
+showsomeDb.saveUsers([
+
+        {
+            // a user object
+            "uid": "761779163"
+        },
+        {
+            // a user object
+            "uid": "759352895"
+        },
+		{
+            // a user object
+            "uid": "583844288"
+        },
+		{
+            // a user object
+            "uid": "759352895"
+        },
+		{
+            // a user object
+            "uid": "100001053996829"
+        },
+		{
+            // a user object
+            "uid": "1127758094"
+        },
+		{
+            // a user object
+            "uid": "589522209"
+        },
+		{
+            // a user object
+            "uid": "604016348"
+        },
+		{
+            // a user object
+            "uid": "603071564"
+        },
+		{
+            // a user object
+            "uid": "617923676"
+        },
+		{
+            // a user object
+            "uid": "833304196"
+        },
+		{
+            // a user object
+            "uid": "100001388995300"
+        }
+    ], function(callback) {});
+	
+
+
 	console.log("SAVED");
 	res.send("saved");
 });
