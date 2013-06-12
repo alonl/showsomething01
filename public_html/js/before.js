@@ -615,20 +615,20 @@ function validateGuess() {
         response = res.responseText;
 
         if (response == "correct") {
-            $(document).simpledialog({
-                'mode': 'bool',
-                'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
-                'useModal': true,
-                'buttons': {
-                    'continue': {
-                        click: function() {
-                            window.location = "#pageMainMenu?reload";
-                        }
-                    }
-                }
-            });
-            //alert("Excellent! You're right! Now it's your time to ShowSomething!");
-           // window.location = "#pageMainMenu?reload";
+//            $(document).simpledialog({
+//                'mode': 'bool',
+//                'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
+//                'useModal': true,
+//                'buttons': {
+//                    'continue': {
+//                        click: function() {
+//                            window.location = "#pageMainMenu?reload";
+//                        }
+//                    }
+//                }
+//            });
+            alert("Excellent! You're right! Now it's your time to ShowSomething!");
+            window.location = "#pageMainMenu?reload";
         } else { // response == number of tries left
 
             // more tries available
