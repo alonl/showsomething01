@@ -615,7 +615,7 @@ function validateGuess() {
         response = res.responseText;
 
         if (response == "correct") {
-            $(this).simpledialog({
+            $(document).simpledialog({
                 'mode': 'bool',
                 'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
                 'useModal': true,
