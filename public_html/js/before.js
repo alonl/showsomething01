@@ -615,20 +615,20 @@ function validateGuess() {
         response = res.responseText;
 
         if (response == "correct") {
-            $(document).simpledialog({
-                'mode': 'bool',
-                'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
-                'useModal': true,
-                'buttons': {
-                    'continue': {
-                        click: function() {
-                            window.location = "#pageMainMenu?reload";
-                        }
-                    }
-                }
-            });
-            //alert("Excellent! You're right! Now it's your time to ShowSomething!");
-           // window.location = "#pageMainMenu?reload";
+//            $(document).simpledialog({
+//                'mode': 'bool',
+//                'prompt': "Excellent! You're right! Now it's your time to ShowSomething!",
+//                'useModal': true,
+//                'buttons': {
+//                    'continue': {
+//                        click: function() {
+//                            window.location = "#pageMainMenu?reload";
+//                        }
+//                    }
+//                }
+//            });
+            alert("Excellent! You're right! Now it's your time to ShowSomething!");
+            window.location = "#pageMainMenu?reload";
         } else { // response == number of tries left
 
             // more tries available
@@ -709,6 +709,7 @@ function isInActiveGames(userID) {
 function deleteGame(gameID) {
     ajaxcall("DELETE", "/game/" + gameID, function() {
         alert("The game has been deleted.");
+        $('#mainLogo').click();
     });
 }
 
@@ -860,7 +861,7 @@ function reloadPage(pageSelector, callback) {
  * @returns {undefined}
  */
 function reloadPageMainMenu(pageSelector, callback) {
-    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
+    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a id="mainLogo" href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
     $(pageSelector + 'Footer').append('<h3>See If You Know What You See!</h3>');
 
     // displays a welcome message to the user
