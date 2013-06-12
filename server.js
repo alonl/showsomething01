@@ -285,7 +285,7 @@ app.post('/turn/g/:gameid', function(req, res) {
 					// changes the game state to riddler
 					showsomeDb.updateGameState(gameid, 'r', false, function (error, result) {
 						
-						res.send(result);
+						res.send("currect");
 						
 						//getGame(gameid, function (result) {
 						//	console.log(result);

@@ -614,7 +614,7 @@ function validateGuess() {
 
         response = JSON.parse(res.responseText);
 
-        if (response == true) {
+        if (response == "currect") {
             alert("Excellent! You're right! Now it's your time to ShowSomething!");
             window.location = "#pageMainMenu?reload";
         } else { // response == number of tries left
