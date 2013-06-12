@@ -784,7 +784,7 @@ function fileUpload() {
     file = document.getElementById('fileToUpload').files[0];
 
     if (file.size > 1049000) {
-        alert("The maximum image size is 1 MB. Please upload a smaller file.");
+        alert("The maximum image size is 1 MB. Please upload a smaller file. (Tip: Try to zoom in while taking the picture for reducing it's size...)");
         return;
     }
 
@@ -795,11 +795,10 @@ function fileUpload() {
         var fileName = document.getElementById('fileToUpload').files[0].name; //Should be 'picture.jpg'
         // TODO: check if the object sent is correct
         ajaxcall("POST", "/turn/r", function() {
-        }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
-        console.log("result = " + result);
-        console.log("name = " + fileName);
-//        makeMoveRiddler(currentGameID);
+            console.log("result = " + result);
+            console.log("name = " + fileName);
         window.location = "#pageMainMenu?reload";
+        }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
     };
 
 
