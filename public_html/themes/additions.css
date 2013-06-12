@@ -42,6 +42,7 @@ h1 {
 
 .centered-normal {
     margin: auto;
+	text-align: center;
 }
 
 .fit-width {

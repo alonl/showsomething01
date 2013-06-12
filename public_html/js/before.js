@@ -419,11 +419,11 @@ function facebookStatusChange(response) {
         // but has not authenticated your app
         connected = false;
         alert("Error: You must authenticate the app on your Facebook account!");
-        window.location = "#pageLogin";
+        $.mobile.changePage("#pageLogin");
     } else {
         // the user isn't logged in to Facebook.
         connected = false;
-        window.location = "#pageLogin";
+        $.mobile.changePage("#pageLogin");
     }
 }
 
@@ -448,7 +448,7 @@ function facebookLoggedIn() {
         ajaxcall("POST", "users/" + response.id, function() {
         }, "", true);
         fullName = response.name;
-        window.location = "#pageMainMenu?reload";
+        $.mobile.changePage("#pageMainMenu?reload");
     });
 
     // trigger page create on the generated words page once the app is loaded
@@ -490,7 +490,7 @@ function yourTurnRiddler(game) {
         if (response == 0) {
 
             // let the user choose new words
-            window.location = "#pageSelectDifficulty";
+            $.mobile.changePage("#pageSelectDifficulty");
         }
 
         // get the already chosen words from server
@@ -585,7 +585,7 @@ function yourTurnGuesser(game) {
         $("#riddleAnswer").attr('placeholder', 'word length is: ' + response.word);
         $("#riddleGameId").attr('value', game._id);
 
-        window.location = "#pageGuess";
+        $.mobile.changePage("#pageGuess");
     });
 
     $(document).bind('pagechange', function() {
@@ -640,7 +640,7 @@ function validateGuess() {
 //                }
 //            });
             alert("Excellent! You're right! Now it's your time to ShowSomething!");
-            window.location = "#pageMainMenu?reload";
+            $.mobile.changePage("#pageMainMenu?reload");
         } else { // response == number of tries left
 
             // more tries available
@@ -674,7 +674,7 @@ function giveup() {
 
         if (response == true) {
             alert("Nice Try! more luck next time! it's your turn to ShowSomething!");
-            window.location = "#pageMainMenu?reload";
+            $.mobile.changePage("#pageMainMenu?reload");
         }
 
     });
@@ -722,8 +722,12 @@ function isInActiveGames(userID) {
 function deleteGame(gameID) {
     
     ajaxcall("DELETE", "/game/" + gameID, function() {
+//        document.getElementById('mainLogo').click();  // TODO: fix
+//        $.mobile.changePage("#pageMainMenu?reload");
+        $('#' + gameID +'li').remove();
+        $('#testlist').trigger('create');
         alert("The game has been deleted.");
-        document.getElementById('mainLogo').click();  // TODO: fix
+        
     });
 }
 
@@ -754,7 +758,7 @@ function updateChosenWords(chosenWords) {
     }
 
     // gets to the actual page
-    window.location = "#pageGeneratedWords";
+    $.mobile.changePage("#pageGeneratedWords");
 }
 
 /**
@@ -767,7 +771,7 @@ function gotoPagePrePictureScreen(chosenWord) {
     $('#picturePreview').attr('src', 'img/pre_upload.png');
     label = document.getElementById('chosenWord');
     label.innerHTML = chosenWord;
-    window.location = '#pagePrePicture';
+    $.mobile.changePage("#pagePrePicture");
 }
 
 /**
@@ -918,7 +922,7 @@ function reloadPageMainMenu(pageSelector, callback) {
                     actionMessage = "Your Move!";
                     link = 'href="javascript: yourTurnGuesser(userActiveGames[' + i + ']);"';
                 }
-                gameItem = '<li><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a><a href="javascript: deleteGame(\'' + gameId + '\');" class="fix-border"></a></li>';
+                gameItem = '<li id="' + gameId + 'li"><a ' + link + ' ><img src="' + photo + '"><h2 class="' + opponentID + 'Name"></h2><p>' + actionMessage + '</p></a><a href="javascript: deleteGame(\'' + gameId + '\');" class="fix-border"></a></li>';
                 $("#testlist").append(gameItem);
             }
 
