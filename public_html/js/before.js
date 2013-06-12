@@ -557,7 +557,7 @@ function generateWords(diff) {
  * @returns {undefined}
  */
 function yourTurnGuesser(game) {
-    //currentGameID =game._id;
+    currentGameID = game._id;
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
 
@@ -629,7 +629,7 @@ function validateGuess() {
 }
 
 // let the server know that the user has given up
-function giveUp() {
+function giveup() {
     
         ajaxcall("get", "/turn/g/giveup/" + currentGameID, function(res) {
 
