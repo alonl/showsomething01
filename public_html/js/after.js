@@ -37,40 +37,46 @@ var data1;
 //*****************************************************************************
 // Page loader
 //*****************************************************************************
+
+$(document).ready(function() {
+
+
 // Listen for any attempts to call changePage().
-$(document).bind("pagebeforechange", function(e, data) {
-    
-    // TODO: delete if doesn't work
-    data1 = data;
-    
+    $(document).bind("pagebeforechange", function(e, data) {
+
+        // TODO: delete if doesn't work
+        data1 = data;
+
 // We only want to handle changePage() calls where the caller is
 // asking us to load a page by URL.
-    if (typeof data1.toPage === "string") {
+        if (typeof data1.toPage === "string") {
 
-        // We are being asked to load a page by URL, but we only
-        // want to handle URLs that request a reload...
-        u = $.mobile.path.parseUrl(data1.toPage),
-                re = /\?reload/;
-        if (u.hash.search(re) === -1) {
-            return;
-        }   //else
+            // We are being asked to load a page by URL, but we only
+            // want to handle URLs that request a reload...
+            u = $.mobile.path.parseUrl(data1.toPage),
+                    re = /\?reload/;
+            if (u.hash.search(re) === -1) {
+                return;
+            }   //else
 
-        pageSelector = u.hash.replace(/\?reload/, "");
-        $page = $(pageSelector);
+            pageSelector = u.hash.replace(/\?reload/, "");
+            $page = $(pageSelector);
 
-        reloadPage(pageSelector, function() {
-            // Now call changePage() and tell it to switch to
-            // the page we just modified.
-            $.mobile.changePage(pageSelector, data1.options);
-        });
+            reloadPage(pageSelector, function() {
+                // Now call changePage() and tell it to switch to
+                // the page we just modified.
+                $.mobile.changePage(pageSelector, data1.options);
+            });
 
-        // Make sure to tell changePage() we've handled this call so it doesn't
-        // have to do anything.
-        e.preventDefault();
-    }
+            // Make sure to tell changePage() we've handled this call so it doesn't
+            // have to do anything.
+            e.preventDefault();
+        }
+
+    });
+
+
+    // TODO: add ???
+//    $('#picturePreview').bind("click", filePreview);
 
 });
-
-
-// TODO: add ???
-$('#picturePreview').click(filePreview());

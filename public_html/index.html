@@ -131,6 +131,7 @@
                 <div class='centered-normal fit-image'>
                     <a href="javascript: filePreview();">
                         <img class='fit-width' id='picturePreview' src='img/pre_upload.jpg' alt='Click here to upload your picture!'>
+                        Upload Image.
                     </a>
                 </div>
 
@@ -138,7 +139,7 @@
 
             <footer data-role="footer" data-position="fixed">
                 <form id="sendPicture" enctype="multipart/form-data" method="post" action="/">
-                    <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);" class="hidden-button"/>
+                    <input type="file" name="fileToUpload" id="fileToUpload" accept="image/*" onchange="showPicture(this.files);"/>
                     <!--TODO: check maximum file size-->
                     <input type="button" onclick="fileUpload();" value="ShowIt!" />
                 </form>
