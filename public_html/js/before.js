@@ -658,7 +658,7 @@ function validateGuess() {
 
         }
 
-    }, answer);
+    }, answer, true);
 
     // You must return false to prevent the default form behavior
     return false;
