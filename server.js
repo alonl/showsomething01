@@ -305,7 +305,7 @@ app.post('/turn/g/:gameid', function(req, res) {
 						} else {
 							
 							// sends back number of tries left
-							res.send(String(result));
+							res.send(result);
 								
 						}
 						

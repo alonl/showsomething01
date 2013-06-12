@@ -303,7 +303,7 @@ ShowsomeDb.prototype.updateTriesLeft = function(gameid, callback) {
 			tries = result[0].triesLeft - 1;
 			console.log(tries);
 			turnInfoG_collection.update({'gameID': gameid}, {$set: {'triesLeft': tries}});
-			callback(null, tries);
+			callback(null, String(tries));
 		  
 		  }
         }); 
