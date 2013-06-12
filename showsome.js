@@ -95,7 +95,7 @@ ShowsomeDb.prototype.getWordByDiff = function (diff, callback) {
 	  this.getCollectionWords(function(error, words_collection) {
       if(error) callback(error)
       else {
-        words_collection.find({difficulty: diff}).toArray(function(error, results) {
+        words_collection.find({'difficulty': diff}).toArray(function(error, results) {
           if( error ) callback(error)
           else callback(null, results)
         });
@@ -364,11 +364,29 @@ ShowsomeDb.prototype.deleteGame = function (gameid, callback) {
       if( error ) callback(false)
       else {
 	  
-		// case one game was chosen for deletion
+		// case all game were chosen for deletion
 		if (gameid == 'all') {
 			games_collection.remove();
 		} else {
 			games_collection.remove({_id: ObjectID(gameid)});
+		}
+		callback(true);
+      }
+    });
+}
+
+// deletes a word instance from db
+ShowsomeDb.prototype.deleteWord = function (word, callback) {
+	
+	this.getCollectionWords(function(error, words_collection) {
+      if( error ) callback(false)
+      else {
+	  
+		// case all words were chosen for deletion
+		if (word == 'all') {
+			words_collection.remove();
+		} else {
+			words_collection.remove({'word': word});
 		}
 		callback(true);
       }
