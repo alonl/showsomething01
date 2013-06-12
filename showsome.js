@@ -95,9 +95,10 @@ ShowsomeDb.prototype.getWordByDiff = function (diff, callback) {
 	  this.getCollectionWords(function(error, words_collection) {
       if(error) callback(error)
       else {
-        words_collection.find({'difficulty': diff}).toArray(function(error, results) {
-          if( error ) callback(error)
-          else callback(null, results)
+        words_collection.find({difficulty: diff}).toArray(function(error, results) {
+			console.log("found " + results.length + "words");
+			if( error ) callback(error)
+			else callback(null, results)
         });
       }
     });

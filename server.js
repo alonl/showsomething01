@@ -137,11 +137,13 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 	
 	
 	// gets all the words from the given difficulty
-	showsomeDb.getWordByDiff(diff, function(error, words) {
+	showsomeDb.getWordByDiff((diff), function(error, words) {
 		
 		if (error) {
 			console.log("error getting words");
 		} else {
+		
+			console.log("words length = " + words.length);
 			
 			for (i = 0; i < 5; i++) {
 

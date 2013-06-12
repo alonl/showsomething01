@@ -728,7 +728,7 @@ function deleteGame(gameID) {
         $('#testlist').trigger('create');
         alert("The game has been deleted.");
         
-    });
+    }, "", true);
 }
 
 //*****************************************************************************
