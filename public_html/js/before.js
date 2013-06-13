@@ -674,7 +674,6 @@ function validateGuess() {
 // let the server know that the user has given up
 function giveup() {
 
-    
     ajaxcall("get", "/turn/g/giveup/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);

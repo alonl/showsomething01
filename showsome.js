@@ -346,7 +346,7 @@ ShowsomeDb.prototype.deleteTurnInfoR = function (gameid, callback) {
         if (gameid == 'all') {
 			turnInfoR_collection.remove();
 		} else {
-			turnInfoR.remove({'gameID': gameid});
+			turnInfoR_collection.remove({'gameID': gameid});
 		}
 		callback(true);
       }

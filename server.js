@@ -354,8 +354,13 @@ app.get('/turn/g/:gameid/photo' , function (req, res) {
 			res.send(error);
 		} else {
 			
-			//return only the image of this game (ommits the object id)
-			res.send(result.photo);
+			if (result == null) {
+				res.status(404).send('Not found');
+			}
+			else {
+				//return only the image of this game (ommits the object id)
+				res.send(result.photo);
+			}
 		}
 	});
 	
