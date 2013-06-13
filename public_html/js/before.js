@@ -114,6 +114,30 @@ function facebookLoggedIn() {
 
 }
 
+function sendRequestViaMultiFriendSelector() {
+	FB.ui({method: 'apprequests',
+		message: 'I've just challanged you on ShowSomething!'
+	}, requestCallback);
+}
+
+function requestCallback(response) {
+
+	// register the friend
+	opponentID = response.to[0];
+	console.log("Opponent ID = " + opponentID);
+	ajaxcall("POST", "users/" + opponentID, function() {
+	
+		// create a new game
+		ajaxcall("POST", "games", function(response2) {
+			game = JSON.parse(response2.responseText);
+			currentGameID = game._id;
+			yourTurnRiddler(game);
+		}, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}', true);
+	
+	}, "", true);
+	
+}
+
 function setNameInHtml(opponentID) {
     FB.api("/" + opponentID, function(response) {
         $("." + opponentID + "Name").each(function() {
@@ -594,8 +618,10 @@ function reloadPageMainMenu(pageSelector, callback) {
 function reloadPageNewGame(pageSelector, callback) {
 
     $(pageSelector + 'Footer').append('<div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>');
-
-    $(pageSelector + 'Content').append('<strong>Choose a Friend:</strong><br><br><div><ul data-role="listview" data-filter="true" data-filter-placeholder="Type a name..." id="friendsList"></ul></div>');
+	
+	$(pageSelector + 'Content').append('<div><a href="#pageNewGame?reload" data-role="button">Invite a friend!</a></div>');
+	
+    $(pageSelector + 'Content').append('<strong>Choose a Friend:</strong><br><br><div><ul data-role="listview" data-filter="true" data-filter-placeholder="Or, choose from current:" id="friendsList"></ul></div>');
 
     // in the end
     $page = $(pageSelector);

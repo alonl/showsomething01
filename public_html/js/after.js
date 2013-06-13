@@ -6,8 +6,9 @@ window.fbAsyncInit = function() {
         appId: '174443279377278', // App ID
         channelUrl: '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
         status: false, // check login status
-        cookie: true, // enable cookies to allow the server to access the session
-        xfbml: true  // parse XFBML
+        cookie: true,  // enable cookies to allow the server to access the session
+        xfbml: true,   // parse XFBML
+		frictionlessRequests: true
     });
 
     // pay attention to the callback function call
