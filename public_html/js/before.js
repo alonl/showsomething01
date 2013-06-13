@@ -437,6 +437,13 @@ function loginFacebookUser() {
     });
 }
 
+function logoutFacebookUser() {
+    FB.logout(function(response) {
+        alert("Your friends are waiting for you to ShowSomething! Come back soon... :)")
+        $.mobile.changePage("#pageLogin");
+    });
+}
+
 function facebookLoggedIn() {
 
     if (connected === true) {
@@ -894,11 +901,15 @@ function reloadPage(pageSelector, callback) {
  * @returns {undefined}
  */
 function reloadPageMainMenu(pageSelector, callback) {
-    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a id="mainLogo" href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1><a href="index.html" data-icon="gear" class="ui-btn-right"></a></header>');
+    
+    popupString = '<div data-role="popup" id="popupSettings"> <ul data-role="listview" data-inset="true" style="min-width:210px;"> <li data-role="divider" data-theme="b">Options</li><li><a href="#pageHelp">Help</a></li> <li><a href="#pageAbout">About</a></li> <li><a href="javascript: logoutFacebookUser();">Logout from Facebook</a></li> </ul> </div>';
+            
+    $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1><a href="#popupSettings" data-rel="popup" data-role="button" data-inline="true" data-transition="slideup" data-icon="gear" class="ui-btn-right">&zwnj;</a>' + popupString + '</header>');
     $(pageSelector + 'Footer').append('<h3>See If You Know What You See!</h3>');
 
     // displays a welcome message to the user
     $(pageSelector + 'Content').append('<div id="welcomeUser"></div>');
+    
     FB.api('/me', function(response) {
         $("#welcomeUser").html("Welcome " + response.name + "!");
     });
@@ -1018,8 +1029,14 @@ function reloadPageNewGame(pageSelector, callback) {
                     }
                 }
             }
-
-
+            
+            // if the list is empty
+            if ($("#friendsList").children().length == 0) {
+                $(pageSelector).prepend('<header data-role="header" data-position="fixed"><h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
+                $(pageSelector + 'Content').empty();
+                $(pageSelector + 'Content').append('<br><br><h3>None of your friends is playing ShowSomething. <a href="https://www.facebook.com/sharer/sharer.php?u=' + window.location.host + '" target="_blank">Spread the word!</a></h3>');
+            }
+           
             $page = $(pageSelector);
             $content = $page.children(":jqmData(role=content)");
 

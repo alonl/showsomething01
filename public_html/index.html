@@ -25,7 +25,7 @@
         <section data-role="page" id="pageWelcome" data-theme="a">
 
             <header data-role="header" data-position="fixed" >
-                <h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1>
+                <h1><a href="http://showsomething06.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1>
             </header>
 
             <div data-role="content">
@@ -173,12 +173,61 @@
                     <input type="text" name="riddleAnswer" id="riddleAnswer" class="centered-text" data-mini="true" data-insert="true" />
                     <button type="submit" name="submit" onclick="validateGuess();">Submit</button>
                 </form>
-                
+
                 <p align="center"><a href="javascript: giveup();" data-role="button" data-inline ="true" >Give up!</a> <a href=#pageMainMenu?reload data-role="button" data-inline ="true">Cancel</a></p>
-                
+
             </footer>
 
         </section><!-- /page Guess -->
+
+        <section data-role="page" id="pageAbout" data-theme="a"> 
+
+            <header data-role="header">
+                <h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1>
+            </header>
+
+            <div data-role="content" data-insert="true">
+                <h3>Copyright</h3>
+                <h4>Michael Chochlov & Alon Lavi<br>Mobile Application Architecture Course<br>IDC Herzliya</h4>
+                <h4>ShowSomething 0.1</h4>
+                <h5>© 2013,  Michael & Alon<br>All Rights Reserved</h5>
+                <h5><a href='mailto:showsome.app@gmail.com'>showsome.app@gmail.com</a></h5>
+                <h4>Enjoying the game? <a href="https://www.facebook.com/sharer/sharer.php?u=showsomething.aws.af.com" target="_blank">Spread the word!</a></h4>
+                <div><a href="#pageMainMenu?reload" data-role="button" data-transition="slidedown">Back to Main Menu</a></div>
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <h3>See If You Know What You See!</h3>
+            </footer>
+
+        </section><!-- /page About -->
+
+        <section data-role="page" id="pageHelp" data-theme="a"> 
+
+            <header data-role="header">
+                <h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1>
+            </header>
+
+            <div data-role="content" data-insert="true">
+                <h3>Help</h3>
+                <p>This is an alpha version of the ShowSomething app. Please feel free to send us feedback to: <a href='mailto:showsome.app@gmail.com'>showsome.app@gmail.com</a>.</p>
+                <h4>Some guidelines:</h4>
+                <ul>
+                <li>Avoid using the browser's navigation (back & forward) buttons.</li>
+                <li>You can click on the logo to return to the main menu.</li>
+                <li>Once a user logs in to the app for the first time, he/she becomes registered.</li>
+                <li>Again, this is an alpha version. Be aware that changes may occur.</li>
+                <li>Enjoy :)</li>
+                </ul>
+                <div><a href="#pageMainMenu?reload" data-role="button" data-transition="slidedown">Back to Main Menu</a></div>
+            </div><!-- /content -->
+
+            <footer data-role="footer" data-position="fixed">
+                <h3>See If You Know What You See!</h3>
+            </footer>
+
+        </section><!-- /page About -->
+
 
         <!--Facebook Javascript SDK-->
         <div id="fb-root"></div>

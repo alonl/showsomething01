@@ -75,7 +75,7 @@ h1 {
 }
 
 .fix-border{
-	border-top: 0px !important;
-	border-bottom: 0px !important;
-	border-right: 0px !important;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
+    border-right: 0px !important;
 }
