@@ -75,8 +75,4 @@ $(document).ready(function() {
 
     });
 
-
-    // TODO: add ???
-//    $('#picturePreview').bind("click", filePreview);
-
 });
