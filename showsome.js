@@ -1,3 +1,6 @@
+/** DATABASE, Wrriten by Alon Lavi && Michael Chochlov */
+
+// requierments
 var Db = require('mongodb').Db;
 var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
@@ -10,11 +13,13 @@ var fs = require("fs");
 // mongo database
 //*****************************************************************************
 
+// initiate DB
 ShowsomeDb = function(host, port) {
   this.db= new Db('node-mongo-showsome', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}));
   this.db.open(function(){});
 };
 
+// returns the game collection, (initiates it if not created)
 ShowsomeDb.prototype.getCollection = function(callback) {
   this.db.collection('games', function(error, games_collection) {
     if( error ) callback(error);
@@ -22,6 +27,7 @@ ShowsomeDb.prototype.getCollection = function(callback) {
   });
 };
 
+// returns the word collection, (initiates it if not created)
 ShowsomeDb.prototype.getCollectionWords = function(callback) {
   this.db.collection('words', function(error, words_collection) {
     if( error ) callback(error);
@@ -29,6 +35,7 @@ ShowsomeDb.prototype.getCollectionWords = function(callback) {
   });
 };
 
+// returns the users collection, (initiates it if not created)
 ShowsomeDb.prototype.getCollectionUsers = function(callback) {
   this.db.collection('users', function(error, users_collection) {
     if( error ) callback(error);
@@ -36,6 +43,7 @@ ShowsomeDb.prototype.getCollectionUsers = function(callback) {
   });
 };
 
+// returns the turn information riddler collection, (initiates it if not created)
 ShowsomeDb.prototype.getCollectionTurnInfoR = function(callback) {
   this.db.collection('turnInfoR', function(error, turnInfoR_collection) {
     if( error ) callback(error);
@@ -43,6 +51,7 @@ ShowsomeDb.prototype.getCollectionTurnInfoR = function(callback) {
   });
 };
 
+// returns the turn information guesser collection, (initiates it if not created)
 ShowsomeDb.prototype.getCollectionTurnInfoG = function(callback) {
   this.db.collection('turnInfoG', function(error, turnInfoG_collection) {
     if( error ) callback(error);
@@ -103,7 +112,7 @@ ShowsomeDb.prototype.getWordByDiff = function (diff, callback) {
     });
 };
 
-// we wrote
+// gets all active games for a given user
 ShowsomeDb.prototype.getActiveGames = function(uid, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
@@ -136,7 +145,7 @@ ShowsomeDb.prototype.saveGames = function(games, callback) {
     });
 };
 
-//save new words
+//add new words
 ShowsomeDb.prototype.saveWords = function(words, callback) {
     this.getCollectionWords(function(error, words_collection) {
       if( error ) callback(error)
@@ -156,7 +165,7 @@ ShowsomeDb.prototype.saveWords = function(words, callback) {
     });
 };
 
-// save users
+// add users
 ShowsomeDb.prototype.saveUsers = function(users, callback) {
     this.getCollectionUsers(function(error, users_collection) {
       if( error ) callback(error)
@@ -176,7 +185,7 @@ ShowsomeDb.prototype.saveUsers = function(users, callback) {
     });
 };
 
-// saves one game in the database
+// adds one game
 ShowsomeDb.prototype.saveOne = function(game, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
@@ -189,7 +198,7 @@ ShowsomeDb.prototype.saveOne = function(game, callback) {
     });
 };
 
-// saves turn information riddler in the database
+// adds turn information riddler in the database
 ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
     this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
       if( error ) callback(error)
@@ -203,7 +212,7 @@ ShowsomeDb.prototype.saveTurnInfoR = function(turn, callback) {
     });
 };
 
-// saves turn information guesser in the database
+// adds turn information guesser in the database
 ShowsomeDb.prototype.saveTurnInfoG = function(turn, callback) {
     this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
       if( error ) callback(error)
@@ -211,14 +220,7 @@ ShowsomeDb.prototype.saveTurnInfoG = function(turn, callback) {
 	  
 		  turn.created_at = new Date();
 		  console.log("trying to upload image");
-		  
-		/*  if (image) {
-				console.log("uploading image");
-				data = fs.readFileSync(image.path);
-				turn.photo = new MongoDb.Binary(data);
-				turn.photoType = image.type;
-		  } */
-		  
+	  
 		  turnInfoG_collection.insert(turn, function() {
           callback(null, turn._id);
         });
@@ -240,6 +242,7 @@ ShowsomeDb.prototype.findOne = function(gameID, callback) {
     });
 };
 
+// finds a turn information riddler
 ShowsomeDb.prototype.getTurnInfoR = function(id, callback) {
     this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
       if( error ) callback(error)
@@ -265,7 +268,7 @@ ShowsomeDb.prototype.getTurnInfoG = function(id, callback) {
     });
 };
 
-// gets only the image from db
+// gets only the image for a given game id
 ShowsomeDb.prototype.getPhoto = function(id, callback) {
     this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
       if( error ) callback(error)
@@ -278,7 +281,7 @@ ShowsomeDb.prototype.getPhoto = function(id, callback) {
     });
 };
 
-// updates the turn information with the word given
+// updates the turn information riddler with the word given
 ShowsomeDb.prototype.updateChosenWord = function(gameid, word, callback) {
     this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
       if( error ) callback(error)
@@ -312,7 +315,7 @@ ShowsomeDb.prototype.updateTriesLeft = function(gameid, callback) {
     });
 };
 
-// updates the game state to "state"
+// updates the game state to "newRole" and next (if any)
 ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback) {
     this.getCollection(function(error, games_collection) {
       if( error ) callback(error)
@@ -335,23 +338,31 @@ ShowsomeDb.prototype.updateGameState = function(gameid, newRole, next, callback)
     });
 };
 
-// deletes a turnInfoR from db
+// deletes a turnInfoR
 ShowsomeDb.prototype.deleteTurnInfoR = function (gameid, callback) {
 	this.getCollectionTurnInfoR(function(error, turnInfoR_collection) {
       if( error ) {callback(false);}
       else {
-        turnInfoR_collection.remove({'gameID': gameid});
+        if (gameid == 'all') {
+			turnInfoR_collection.remove();
+		} else {
+			turnInfoR.remove({'gameID': gameid});
+		}
 		callback(true);
       }
     });
 };
 
-// deletes turninfoG from db
+// deletes turninfoG 
 ShowsomeDb.prototype.deleteTurnInfoG = function (gameid, callback) {
 	this.getCollectionTurnInfoG(function(error, turnInfoG_collection) {
       if( error ) {callback(false);}
       else {
-        turnInfoG_collection.remove({'gameID': gameid});
+        if (gameid == 'all') {
+			turnInfoG_collection.remove();
+		} else {
+			turnInfoG.remove({'gameID': gameid});
+		}
 		callback(true);
       }
     });
@@ -393,4 +404,6 @@ ShowsomeDb.prototype.deleteWord = function (word, callback) {
     });
 }
 
+// exports the instance of the DB
 exports.ShowsomeDb = ShowsomeDb;
+

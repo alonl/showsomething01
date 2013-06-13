@@ -1,3 +1,6 @@
+/** Server side, Wrriten by Alon Lavi && Michael Chochlov */
+
+//requirements
 var express = require('express');
 var showsome = require('./showsome');
 var ShowsomeDb = require('./showsome').ShowsomeDb;
@@ -7,42 +10,18 @@ var http = require('http')
 var app = express();//.createServer();
 app.configure(function () {
     app.use(express.logger('dev'));    
-    app.use(express.bodyParser());//it will parse json request bodies (as well as others), and place the result in req.body:
+    app.use(express.bodyParser());//it will parse json request bodies (as well as others), and place the result in req.body:
 });
 
+// init DB instance
 var showsomeDb = new ShowsomeDb('localhost', 27017);
 
 app.use('/public', express.static(__dirname+'/public_html'));
 app.use('/', express.static(__dirname+'/public_html'));
 
-app.get('/games' , function(req, res) {
-	showsomeDb.findAll(function(error, games){
-		res.send(JSON.stringify([
-        {
-            // a game object
-            "_id": 000,
-            "uid0": "100002058341130",
-            "uid1": "100001053996829",
-            "next": "0",
-            "role": "r"
-        },
-        {
-            "_id": 001,
-            "uid0": "100002058341130",
-            "uid1": "1127758094",
-            "next": "1",
-            "role": "r"
-        },
-        {
-            "_id": 002,
-            "uid0": "761779163",
-            "uid1": "100002058341130",
-            "next": "1",
-            "role": "g"
-        }
-    ]));
-	});
-});
+
+///////////////// Server Functions ////////////////////////////
+
 
 //get all active games for a given user
 app.get('/games/:uid', function(req, res) {
@@ -50,13 +29,15 @@ app.get('/games/:uid', function(req, res) {
 	// gets the id
 	var uid = req.params.uid;
 	
+	// get games all gamrs from db
 	showsomeDb.getActiveGames(uid, function(error, result) {
 		if (error) {
 			console.log(error);
 		} else {
-			var userActiveGames = [];
+			var userActiveGames = []; // found active games for this user
 			for (i = 0; i < result.length; i++) {
 				
+				// if user is either a first player or second player, adds this game
 				if (result[i].uid0 == uid) {
 					game = new Game(result[i]._id, result[i].uid1, 1 - result[i].next, result[i].role);
 				} else if (result[i].uid1 == uid) {
@@ -78,6 +59,7 @@ app.get('/games/:uid', function(req, res) {
 	
 });
 
+// create a new game at the server and push it to DB
 app.post('/games', function(req, res) {
 
 	var body = "";
@@ -89,6 +71,7 @@ app.post('/games', function(req, res) {
 		
 		incoming = JSON.parse(body);
 		
+		// new game instance
 		newGame = { 
 		"uid0": incoming.uid0, 
 		"uid1": incoming.uid1, 
@@ -143,6 +126,7 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 			console.log("error getting words");
 		} else {
 			
+			// 5 words at a time
 			for (i = 0; i < 5; i++) {
 
 				randomNumber = Math.floor(Math.random() * words.length);
@@ -165,15 +149,14 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 			
 			// update database
 			// creates an instance of a relative game accordingly
-			// TODO: create this database and push
 			newTurnInfoR = {
-				"gameID": gameID,
+				"gameID": gameID, //referance to the game object
 				"word0": chosenWords[0],
 				"word1": chosenWords[1],
 				"word2": chosenWords[2],
 				"word3": chosenWords[3],
 				"word4": chosenWords[4],
-				"chosenWord": -1
+				"chosenWord": -1 //  no word chosen yet
 			};
 			
 			// pushes the new move to database
@@ -181,11 +164,11 @@ app.get('/game/generate/:gameid/:diff', function(req, res) {
 				console.log("newly puted newTurnInfoR with game id: " + result.gameID);
 			});
 			
+			// replyes with word chosen
 			res.send(chosenWords);
 		
 		}
-		
-		
+
 	});
 
 });
@@ -216,6 +199,7 @@ app.post('/users/:id', function (req, res) {
 			console.log(error);
 		} else {
 			
+			// looks for user in registered users db
 			for (i = 0; i < users.length; i++) {
 			
 				if (users[i].uid == userID) {
@@ -260,10 +244,13 @@ app.get('/turn/r/:gameid', function(req, res) {
 
 });
 
+// validates a guess provided by the user(the guess is in the body)
 app.post('/turn/g/:gameid', function(req, res) {
 	
 	gameid = req.params.gameid;
 	answer = ""
+	
+	// reads body
 	req.on('data', function(chunk) {
 		answer += chunk;
 	});
@@ -287,7 +274,7 @@ app.post('/turn/g/:gameid', function(req, res) {
 					
 				}
 
-				// wrong guess, return false
+				// wrong guess, 
 				else {
 					
 					// updates the number of tries left
@@ -318,7 +305,7 @@ app.get('/turn/g/giveup/:gameid', function(req, res) {
 
 	gameid = req.params.gameid;
 	
-	// changes the game state to riddler (same player
+	// changes the game state to riddler (same player, different move)
 	showsomeDb.updateGameState(gameid, 'r', false, function (error, result) {
 						
 		res.send(result);
@@ -327,11 +314,12 @@ app.get('/turn/g/giveup/:gameid', function(req, res) {
 		
 });
 
-// gets turn information guessrr from the DB
+// gets turn information guesser from the DB
 app.get('/turn/g/:gameid' , function (req, res) {
 	
 	gameid = req.params.gameid;
 	
+	// gets the turn from db
 	showsomeDb.getTurnInfoG(gameid, function (error, result) {
 		
 		if (error) {
@@ -342,7 +330,7 @@ app.get('/turn/g/:gameid' , function (req, res) {
 			// but its length
 			copy = {
 				"gameID": result.gameID,
-				"word": result.word.length,
+				"word": result.word.length, // so that the right answer wiil not be seen in network traffic
 				"triesLeft": result.triesLeft
 			}
 			
@@ -354,11 +342,12 @@ app.get('/turn/g/:gameid' , function (req, res) {
 	
 });
 
-// gets the image of the current turnInfoG
+// gets the image of the current turn information guesser
 app.get('/turn/g/:gameid/photo' , function (req, res) {
 
 	gameid = req.params.gameid;
 	
+	// gets only the photo
 	showsomeDb.getPhoto(gameid, function (error, result) {
 		
 		if (error) {
@@ -376,12 +365,15 @@ app.get('/turn/g/:gameid/photo' , function (req, res) {
 app.put('/turn/r/:gameid', function(req, res) {
 	
 	gameid = req.params.gameid;
+	
+	// reads body and gets word
 	chosenWord = "";
 	req.on('data', function(chunk) {
 		chosenWord += chunk;
 	});
 	req.on('end', function() {
 	
+		// updates word in db
 		showsomeDb.updateChosenWord(gameid, chosenWord, function (error, result) {
 		
 			if (error) {
@@ -440,6 +432,7 @@ app.post('/turn/r', function (req, res) {
 	
 });
 
+// deletes a game from DB
 app.delete('/game/:gameid', function (req, res) {
 
 	gameid = req.params.gameid;
@@ -465,6 +458,7 @@ app.delete('/game/:gameid', function (req, res) {
 				res2 = result;
 			});
 			
+			// informs about success of deletion
 			if (res1 && res2) {
 				res.send("Successfuly deleted game: " + gameid);
 			} else if (!res1){
@@ -478,6 +472,86 @@ app.delete('/game/:gameid', function (req, res) {
 	
 });
 
+////////////////////////////Helper functions///////////////////////////////////////
+
+/**
+ * Defines a game relative for this user.
+ * 
+ * @param {type} gameID - current game
+ * @param {type} opponentID - user's opponent
+ * @param {type} nextPlayer - 1 if you're the next player, else 0
+ * @param {type} nextRole - the next state for this player (r - riddler, g - guesser)
+ * @returns {Game}
+ */
+function Game(gameID, opponentID, nextPlayer, nextRole) {
+    this._id = gameID;
+    this.opponentID = opponentID;
+    this.nextPlayer = nextPlayer;
+    this.nextRole = nextRole;
+}
+
+function in_array(needle, haystack){
+ 
+    for (i = 0; i<haystack.length ;i++) {
+        if (haystack[i] == needle) return i;
+    }
+    return -1;
+}
+
+// gets a single game from db
+function getGame(gameid, callback) {
+		showsomeDb.findOne(gameid, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback(result);
+		}
+	});
+}
+
+/********************************************************************************************************/
+/** ADMIN CONTROL FUNCTIONS - basic collection, more will be added on next submittion*/
+
+// delete all words in DB 
+app.delete('/yugi', function(req, res) {
+
+	showsomeDb.deleteWord('all', function(result) { //delets all words
+	
+		if (result) {
+			res.send("all words have been deleted");
+		} else {
+			res.send("error deleting all words");
+		}
+	}); 
+	
+
+});
+
+// save given words in DB
+app.post('/yugi', function(req, res) {
+
+	var body = "";
+	req.on('data', function(chunk) {
+		body += chunk;
+	});
+	req.on('end', function() {
+
+		incoming = JSON.parse(body);
+	
+		showsomeDb.saveWords(incoming, function(err, words) {
+			if (err) {
+				res.send("error while saving given words");
+			} else {
+				res.send("save successfuly");
+			}
+	
+		}); 
+	
+	}); 
+
+});
+
+// save basic words set set in DB
 app.get('/yugi', function(req, res) {
 	showsomeDb.saveWords([
         {
@@ -662,14 +736,21 @@ app.get('/yugi', function(req, res) {
             "difficulty": "3",
             "word": "behavior"
         }
-    ], function(callback) {});
-});
+    ], function(err, result) {
+		if (err) {
+			res.send("could not save words");
+		} else {
+			res.send("OKAY");
+		}
+	});
+}); 
 
 app.get('/momo', function(req, res) {
 
 showsomeDb.deleteGame('all' ,function(callback) {});
-//showsomeDb.deleteWord('all', function(callback) {}); //delets all words
-	
+showsomeDb.deleteTurnInfoG('all' ,function(callback) {});
+showsomeDb.deleteTurnInfoR('all' ,function(callback) {});
+
 showsomeDb.saveGames([
         {
             // a game object
@@ -684,25 +765,7 @@ showsomeDb.saveGames([
             "next": "1",
             "role": "r"
         }
-    /*    {
-            "uid0": "761779163",
-            "uid1": "100002058341130",
-            "next": "1",
-            "role": "g"
-        } */
     ], function(callback) {});
-	
- /*showsomeDb.saveTurnInfoG([
-		{
-            "gameID": "51ae579c2b7152cc24000003", // game id
-            "word": "waterfall", // words for guesser to desctibe
-            "photo": "img/waterfall2.jpg", // the photo of the word to describe
-            "triesLeft": 5 //number of tries left (will be used in next version)
-        }
-    ], function(callback) {}); */
-	
-	
-	
 	
 showsomeDb.saveUsers([
 
@@ -756,46 +819,8 @@ showsomeDb.saveUsers([
         }
     ], function(callback) {});
 	
-
-
-	console.log("SAVED");
-	res.send("saved");
+	res.send("empty db and saved basic games");
 });
 
-app.listen(3000);
+app.listen(3000); // starts listening
 
-
-/**
- * Defines a game relative for this user.
- * 
- * @param {type} gameID - current game
- * @param {type} opponentID - user's opponent
- * @param {type} nextPlayer - 1 if you're the next player, else 0
- * @param {type} nextRole - the next state for this player (r - riddler, g - guesser)
- * @returns {Game}
- */
-function Game(gameID, opponentID, nextPlayer, nextRole) {
-    this._id = gameID;
-    this.opponentID = opponentID;
-    this.nextPlayer = nextPlayer;
-    this.nextRole = nextRole;
-}
-
-function in_array(needle, haystack){
- 
-    for (i = 0; i<haystack.length ;i++) {
-        if (haystack[i] == needle) return i;
-    }
-    return -1;
-}
-
-// gets a single game from db
-function getGame(gameid, callback) {
-		showsomeDb.findOne(gameid, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(result);
-		}
-	});
-}
