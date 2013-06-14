@@ -115,9 +115,7 @@ function facebookLoggedIn() {
 }
 
 function sendRequestViaMultiFriendSelector() {
-	FB.ui({method: 'apprequests',
-		message: 'I've just challanged you on ShowSomething!'
-	}, requestCallback);
+	FB.ui({method: "apprequests", message: "I've just challanged you on ShowSomething!"}, requestCallback);
 }
 
 function requestCallback(response) {
@@ -242,6 +240,8 @@ function yourTurnGuesser(game) {
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
 
+	document.getElementById('riddle-answer').reset(); // reset form
+	
     var image = document.createElement('img');
     image.src = "img/loading.gif";
     $(image).addClass('fit-width');
@@ -619,9 +619,9 @@ function reloadPageNewGame(pageSelector, callback) {
 
     $(pageSelector + 'Footer').append('<div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>');
 	
-	$(pageSelector + 'Content').append('<div><a href="#pageNewGame?reload" data-role="button">Invite a friend!</a></div>');
+	$(pageSelector + 'Content').append('<div><a href="javascript: sendRequestViaMultiFriendSelector();" data-role="button">Invite a friend!</a></div>');
 	
-    $(pageSelector + 'Content').append('<strong>Choose a Friend:</strong><br><br><div><ul data-role="listview" data-filter="true" data-filter-placeholder="Or, choose from current:" id="friendsList"></ul></div>');
+    $(pageSelector + 'Content').append('<strong>Or, choose from existing:</strong><br><br><div><ul data-role="listview" data-filter="true" data-filter-placeholder="Type a name..." id="friendsList"></ul></div>');
 
     // in the end
     $page = $(pageSelector);
