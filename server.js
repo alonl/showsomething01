@@ -19,6 +19,30 @@ var showsomeDb = new ShowsomeDb('localhost', 27017);
 app.use('/public', express.static(__dirname+'/public_html'));
 app.use('/', express.static(__dirname+'/public_html'));
 
+// handle https (ssl encrypted requests)
+app.use(function(req, res, next) {
+	
+	// check if connection is enctypted
+	encrypted = false;
+	try { request.connection.getPeerCertificate(); }
+	catch (err) {
+		encrypted = true;
+	}
+	console.log("connection encrypted = " + encrypted);
+	
+	if (encrypted) {
+		res.sendfile(__dirname + '/public_html/notsupported.html');
+	} else {
+		next();
+	}
+});
+app.use(app.router);
+
+
+// handle facebook request
+app.post('/', function(req, res) {
+	res.sendfile(__dirname + '/public_html/index.html');
+});
 
 ///////////////// Server Functions ////////////////////////////
 

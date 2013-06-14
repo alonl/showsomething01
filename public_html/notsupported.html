@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>ShowSomething</title> 
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+        <link rel="stylesheet" href="themes/show1.min.css"/>
+        <link rel="stylesheet" href="themes/additions.css"/>
+
+        <script src="js/libs/jquery-1.8.3.min.js"></script>
+        <script src="js/libs/jquery.mobile-1.2.1.min.js"></script>
+		<script src="js/before_enc.js"></script>
+		
+    </head>
+
+    <body onload="FB.login(function(response){});">
+
+        <section data-role="page" id="pageWelcome" data-theme="a">
+
+            <header data-role="header" class="centered-text" data-position="fixed" >
+                <h1><a href="http://showsomething.aws.af.cm" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1>
+            </header>
+
+            <div data-role="content">
+                <h2 id="welcomeMessage">Welcome to ShowSomething</h2>
+                <h3>Sorry, HTTPS (SSL encrypted) connections are not supported yet.<br>Please use this address:</h3>
+				<h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://showsomething.aws.af.cm" target="_blank">http://showsomething.aws.af.cm</a></h4>
+				<br><br>
+            </div><!-- /content -->
+
+            <footer data-role="footer" class="centered-text" data-position="fixed">
+                <h3>See If You Know What You See!</h3>
+            </footer>
+
+        </section>
+		
+		 <!--Facebook Javascript SDK-->
+        <div id="fb-root"></div>
+        <script src="js/after_enc.js"></script>
+
+    </body>
+
+</html>
