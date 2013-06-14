@@ -21,16 +21,40 @@ app.use('/', express.static(__dirname+'/public_html'));
 
 // handle https (ssl encrypted requests)
 app.use(function(req, res, next) {
+	connectionKey = req.body.signed_request;
+	console.log('connectionKey = ' + connectionKey);
 	
-	// check if connection is enctypted
 	encrypted = false;
-	try { request.connection.getPeerCertificate(); }
-	catch (err) {
+	if (typeof connectionKey === 'undefined') {
+		encrypted = false;
+		console.log('connection is not encrypted');
+	} else {
 		encrypted = true;
+		console.log('connection is encrypted');
 	}
-	console.log("connection encrypted = " + encrypted);
-	
-	if (encrypted) {
+		
+	// check if connection is enctypted
+//	encrypted = true;
+//	try { certificate = req.connection.getPeerCertificate(); console.log('certificate' = certificate); }
+//	catch (err) {
+//		console.log('connection is not encrypted');
+//		encrypted = false;
+//	}
+
+//	console.log('req protocol = ' + req.protocol);
+
+//	encrypted = false;
+//	console.log("encrypted = " + req.connection.encrypted);
+//	if (req.connection.encrypted == 'undefined') {
+//		console.log("encrypted undefined");
+//		encrypted = false;
+//	} else {
+//		console.log("encrypted id defined");
+//		encrypted = true;
+//	}
+
+	if (encrypted == true) {
+		console.log('not supported page');
 		res.sendfile(__dirname + '/public_html/notsupported.html');
 	} else {
 		next();
@@ -40,9 +64,9 @@ app.use(app.router);
 
 
 // handle facebook request
-app.post('/', function(req, res) {
-	res.sendfile(__dirname + '/public_html/index.html');
-});
+//app.post('/', function(req, res) {
+//	res.sendfile(__dirname + '/public_html/index.html');
+//});
 
 ///////////////// Server Functions ////////////////////////////
 
@@ -852,4 +876,3 @@ showsomeDb.saveUsers([
 });
 
 app.listen(3000); // starts listening
-

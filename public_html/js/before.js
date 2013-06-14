@@ -69,7 +69,7 @@ function facebookStatusChange(response) {
         // the user is logged in to Facebook, 
         // but has not authenticated your app
         connected = false;
-        alert("Error: You must authenticate the app on your Facebook account!");
+        alert("You must authenticate the app on your Facebook account! Please login again.");
         $.mobile.changePage("#pageLogin");
     } else {
         // the user isn't logged in to Facebook.
