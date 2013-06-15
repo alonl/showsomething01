@@ -557,7 +557,7 @@ function reloadPageMainMenu(pageSelector, callback) {
         if (userActiveGames != null)
         {
             if (userActiveGames.length == 0) {
-                $(pageSelector + 'Content').append("<h3>You have no active games. Isn't it a time to create a new one?</h3>")
+                $(pageSelector + 'Content').append("<h3>You have no active games. Isn't it about time to create a new one?</h3>")
             }
             
             for (i = 0; i < userActiveGames.length; ++i) {
