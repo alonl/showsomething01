@@ -665,7 +665,8 @@ function reloadPageNewGame(pageSelector, callback) {
             if ($("#friendsList").children().length == 0) {
                 $(pageSelector).prepend('<header data-role="header" data-position="fixed"><h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
                 $(pageSelector + 'Content').empty();
-                $(pageSelector + 'Content').append('<br><br><h3>None of your friends is playing ShowSomething. <a href="https://www.facebook.com/sharer/sharer.php?u=' + window.location.host + '" target="_blank">Spread the word!</a></h3>');
+                $(pageSelector + 'Content').append('<br><br><h3>None of your friends is playing ShowSomething</h3>');
+				$(pageSelector + 'Content').append('<div><a href="javascript: sendRequestViaMultiFriendSelector();" data-role="button">Invite a friend!</a></div>');
             }
            
             $page = $(pageSelector);
