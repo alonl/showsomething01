@@ -12,11 +12,11 @@ var currentGameID = 0;
 //*****************************************************************************
 
 var ajaxcall = function(method, url, onready, body, showReload) {
-    
+
     if (showReload == null) {
         $.mobile.showPageLoadingMsg("", "Get ready to ShowSomething!");
     }
-    
+
     var request = false;
     request = new XMLHttpRequest();
 
@@ -115,25 +115,25 @@ function facebookLoggedIn() {
 }
 
 function sendRequestViaMultiFriendSelector() {
-	FB.ui({method: "apprequests", message: "I've just challanged you on ShowSomething!"}, requestCallback);
+    FB.ui({method: "apprequests", message: "I've just challanged you on ShowSomething!"}, requestCallback);
 }
 
 function requestCallback(response) {
 
-	// register the friend
-	opponentID = response.to[0];
-	console.log("Opponent ID = " + opponentID);
-	ajaxcall("POST", "users/" + opponentID, function() {
-	
-		// create a new game
-		ajaxcall("POST", "games", function(response2) {
-			game = JSON.parse(response2.responseText);
-			currentGameID = game._id;
-			yourTurnRiddler(game);
-		}, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}', true);
-	
-	}, "", true);
-	
+    // register the friend
+    opponentID = response.to[0];
+    console.log("Opponent ID = " + opponentID);
+    ajaxcall("POST", "users/" + opponentID, function() {
+
+        // create a new game
+        ajaxcall("POST", "games", function(response2) {
+            game = JSON.parse(response2.responseText);
+            currentGameID = game._id;
+            yourTurnRiddler(game);
+        }, '{"uid0": "' + uid + '", "uid1": "' + opponentID + '"}', true);
+
+    }, "", true);
+
 }
 
 function setNameInHtml(opponentID) {
@@ -160,7 +160,7 @@ function setNameInHtml(opponentID) {
 function yourTurnRiddler(game) {
 
     currentGameID = game._id;
-    
+
     ajaxcall("GET", "turn/r/" + currentGameID, function(res) {
 
         response = JSON.parse(res.responseText);
@@ -209,11 +209,11 @@ function transferChosenWord() {
 
     // finds out which word was checked
     chosenWord = $('#wordsPresented :checked').val();
-    
+
     ajaxcall("PUT", "turn/r/" + currentGameID, function() {
         gotoPagePrePictureScreen(chosenWord);
     }, chosenWord);
-    
+
 }
 
 /**
@@ -222,7 +222,7 @@ function transferChosenWord() {
  * @returns {undefined}
  */
 function generateWords(diff) {
-        
+
     ajaxcall("GET", "game/generate/" + currentGameID + "/" + diff, function(response) {
         words = JSON.parse(response.responseText);
         updateChosenWords(words);
@@ -240,15 +240,15 @@ function yourTurnGuesser(game) {
     $("#riddleName").addClass(game.opponentID + 'Name');
     setNameInHtml(game.opponentID);
 
-	document.getElementById('riddle-answer').reset(); // reset form
-	
+    document.getElementById('riddle-answer').reset(); // reset form
+
     var image = document.createElement('img');
     image.src = "img/loading.gif";
     $(image).addClass('fit-width');
     document.getElementById('riddleImageDiv').innerHTML = "";
     document.getElementById('riddleImageDiv').appendChild(image);
 
-    
+
     ajaxcall("GET", "turn/g/" + game._id, function(res) {
         response = JSON.parse(res.responseText);
 
@@ -282,7 +282,7 @@ function validateGuess() {
     answer = document.forms["riddle-answer"]["riddleAnswer"].value;
 
     // validate the guess with info from the server
-    
+
     ajaxcall("POST", "/turn/g/" + gameId, function(res) {
 
         response = res.responseText;
@@ -357,18 +357,18 @@ function isInActiveGames(userID) {
 }
 
 function deleteGame(gameID) {
-    
+
     ajaxcall("DELETE", "/game/" + gameID, function() {
 
         // removes the game from the list view
-        $('#' + gameID +'li').remove();
+        $('#' + gameID + 'li').remove();
         $('#testlist').trigger('create');
-        
+
         // removes the game from the active games list
         findAndRemove(userActiveGames, '_id', gameID);
-        
+
         alert("The game has been deleted.");
-        
+
     }, "", true);
 }
 
@@ -424,8 +424,11 @@ function showPicture(files) {
     file = files[0];
     fileReader = new FileReader();
     fileReader.readAsDataURL(file);
-    fileReader.onload = function(oFREvent) {
-        $('#picturePreview').attr('src', oFREvent.target.result);
+    fileReader.onload = function(event) {
+        imageBlob = event.target.result;
+        console.log("image size before = " + imageBlob.length);
+        imageBlobFileName = files[0].name; //Should be 'picture.jpg'
+        $('#picturePreview').attr('src', imageBlob);
     };
 }
 
@@ -438,31 +441,42 @@ function filePreview() {
  * @returns {undefined}
  */
 function fileUpload() {
-    file = document.getElementById('fileToUpload').files[0];
-
-    if (file.size > 1049000) {
-        alert("The maximum image size is 1 MB. Please upload a smaller file. (Tip: Try to zoom in while taking the picture for reducing it's size...)");
-        return;
-    }
-    
     alert("The picture is now being sent to your friend! Please wait a moment.");
-    
     $.mobile.showPageLoadingMsg("", "Get ready to ShowSomething!");
+    var reducedImage = reduceImage(document.getElementById('picturePreview'));
+    ajaxcall("POST", "/turn/r", function() {
+        $.mobile.changePage("#pageMainMenu?reload");
+    }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: reducedImage, triesLeft: 5}));
+}
 
-    reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(event) {
-        var result = event.target.result;
-        var fileName = document.getElementById('fileToUpload').files[0].name; //Should be 'picture.jpg'
-
-        ajaxcall("POST", "/turn/r", function() {
-            console.log("result = " + result);
-            console.log("name = " + fileName);
-            $.mobile.changePage("#pageMainMenu?reload"); 
-        }, JSON.stringify({gameID: currentGameID, word: chosenWord, photo: result, triesLeft: 5}));
-    };
-
-
+function reduceImage(img) {
+    var canvas = document.getElementById("imageCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    var MAX_WIDTH = 800;
+    var MAX_HEIGHT = 600;
+    var width = img.width;
+    var height = img.height;
+    if (width > height) {
+        if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+        }
+    } else {
+        if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+        }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    
+    var reducedImage = canvas.toDataURL("image/png")
+    console.log("image size after = " + reducedImage.length);
+    
+    return reducedImage;
 }
 
 /**
@@ -485,12 +499,12 @@ var sort_by = function(field, reverse, primer) {
 };
 
 function findAndRemove(array, property, value) {
-   $.each(array, function(index, result) {
-      if(result[property] == value) {
-          //Remove from array
-          array.splice(index, 1);
-      }    
-   });
+    $.each(array, function(index, result) {
+        if (result[property] == value) {
+            //Remove from array
+            array.splice(index, 1);
+        }
+    });
 }
 
 
@@ -530,15 +544,15 @@ function reloadPage(pageSelector, callback) {
  * @returns {undefined}
  */
 function reloadPageMainMenu(pageSelector, callback) {
-    
+
     popupString = '<div data-role="popup" id="popupSettings"> <ul data-role="listview" data-inset="true" style="min-width:210px;"> <li data-role="divider" data-theme="b">Options</li><li><a href="#pageHelp">Help</a></li> <li><a href="#pageAbout">About</a></li> <li><a href="javascript: logoutFacebookUser();">Logout from Facebook</a></li> </ul> </div>';
-            
+
     $(pageSelector).append('<header data-role="header" data-position="fixed"><h1><a href="http://showsomething.aws.af.cm/" target="_self"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1><a href="#popupSettings" data-rel="popup" data-role="button" data-inline="true" data-transition="slideup" data-icon="gear" class="ui-btn-right">&zwnj;</a>' + popupString + '</header>');
     $(pageSelector + 'Footer').append('<h3>See If You Know What You See!</h3>');
 
     // displays a welcome message to the user
     $(pageSelector + 'Content').append('<div id="welcomeUser"></div>');
-    
+
     FB.api('/me', function(response) {
         $("#welcomeUser").html("Welcome " + response.name + "!");
     });
@@ -549,7 +563,7 @@ function reloadPageMainMenu(pageSelector, callback) {
 
     userActiveGames = [];
 
-    
+
     ajaxcall("GET", "games/" + uid, function(response) {
 
         userActiveGames = JSON.parse(response.responseText);
@@ -559,7 +573,7 @@ function reloadPageMainMenu(pageSelector, callback) {
             if (userActiveGames.length == 0) {
                 $(pageSelector + 'Content').append("<h3>You have no active games. Isn't it about time to create a new one?</h3>")
             }
-            
+
             for (i = 0; i < userActiveGames.length; ++i) {
                 gameId = userActiveGames[i]._id;
                 opponentID = userActiveGames[i].opponentID;
@@ -600,7 +614,7 @@ function reloadPageMainMenu(pageSelector, callback) {
             // to be the url that shows up in the browser's location field,
             // so set the dataUrl option to the URL for the category
             // we just loaded.
-			//    options.dataUrl = u.href;
+            //    options.dataUrl = u.href;
 
             callback();
         }
@@ -618,16 +632,16 @@ function reloadPageMainMenu(pageSelector, callback) {
 function reloadPageNewGame(pageSelector, callback) {
 
     $(pageSelector + 'Footer').append('<div><a href=#pageMainMenu?reload data-role="button" data-min="true">Cancel</a></div>');
-	
-	$(pageSelector + 'Content').append('<div><a href="javascript: sendRequestViaMultiFriendSelector();" data-role="button">Invite a friend!</a></div>');
-	
+
+    $(pageSelector + 'Content').append('<div><a href="javascript: sendRequestViaMultiFriendSelector();" data-role="button">Invite a friend!</a></div>');
+
     $(pageSelector + 'Content').append('<strong>Or, choose from existing:</strong><br><br><div><ul data-role="listview" data-filter="true" data-filter-placeholder="Type a name..." id="friendsList"></ul></div>');
 
     // in the end
     $page = $(pageSelector);
     $content = $page.children(":jqmData(role=content)");
 
-    
+
     ajaxcall("GET", "users", function(response) {
 
         registeredUsersDB = JSON.parse(response.responseText);
@@ -660,7 +674,7 @@ function reloadPageNewGame(pageSelector, callback) {
                     }
                 }
             }
-            
+
             // if the list is empty
             if ($("#friendsList").children().length == 0) {
                 $(pageSelector).prepend('<header data-role="header" data-position="fixed"><h1><a href="#pageMainMenu?reload"><img src="img/logo_trans.png" alt="ShowSomething"></a></h1></header>');
@@ -668,7 +682,7 @@ function reloadPageNewGame(pageSelector, callback) {
                 $(pageSelector + 'Content').append('<br><br><h3>None of your friends is playing ShowSomething</h3>');
 				$(pageSelector + 'Content').append('<div><a href="javascript: sendRequestViaMultiFriendSelector();" data-role="button">Invite a friend!</a></div>');
             }
-           
+
             $page = $(pageSelector);
             $content = $page.children(":jqmData(role=content)");
 
@@ -686,7 +700,7 @@ function reloadPageNewGame(pageSelector, callback) {
             // to be the url that shows up in the browser's location field,
             // so set the dataUrl option to the URL for the category
             // we just loaded.
-			//    options.dataUrl = u.href;
+            //    options.dataUrl = u.href;
 
             callback();
 
